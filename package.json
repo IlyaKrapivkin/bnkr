@@ -1,0 +1,19 @@
+{
+  "name": "bnkr",
+  "author": "Ilya",
+  "version": "1.0.0",
+  "description": "API acquiring imitation",
+  "license": "MIT",
+  "main": "run.js",
+  "enfineStrict": true,
+  "engines": {
+    "node": "19.8.1",
+    "npm": "9.5.1"
+  },
+  "scripts": {
+    "run": "node run.js"
+  },
+  "dependencies": {
+    "express": "5.0.0-beta.1"
+  }
+}
