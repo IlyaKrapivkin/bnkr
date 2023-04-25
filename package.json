@@ -1,14 +1,14 @@
 {
   "name": "bnkr",
   "author": "Ilya",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API acquiring imitation",
   "license": "MIT",
   "main": "run.js",
-  "enfineStrict": true,
+  "engineStrict": true,
   "engines": {
-    "node": "19.8.1",
-    "npm": "9.5.1"
+    "node": "19.9.0",
+    "npm": "9.6.3"
   },
   "scripts": {
     "run": "node run.js"

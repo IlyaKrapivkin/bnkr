@@ -1,7 +1,4 @@
 const http = require(`http`);
-// const url = require(`url`);
-
-// const str_localhost = `127.0.0.1 `;
 
 const num_port = 3001;
 const num_statusOk = 200;
@@ -13,16 +10,15 @@ const str_messageConnection = `🚂 new connection`;
 const str_messageRequest = `🚗 new request`;
 const str_messageOk = `OK`;
 const str_messageIncorrect = `INCORRECT`;
-const str_contentTypeText = `text/plain`;
+const str_contentTypeText = `text/plain`
 
 const server = http.createServer();
 
-server.on(`connection`, connection => {
-  console.log(str_messageConnection)
+server.on(`connection`, () => {
+  console.log(str_messageConnection);
 })
 
 server.on(`request`, (req, res) => {
-  // const urlObj = url.parse(req.url, true);
   console.log(str_messageRequest);
 
   switch (req.method) {
