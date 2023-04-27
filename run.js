@@ -9,42 +9,45 @@ const str_methodPost = `POST`;
 const str_messageOk = `OK`;
 const str_messageIncorrect = `INCORRECT`;
 const str_messageStart = `🚀 server started on port [${ num_port }]\n`;
-const str_messageConnection = `🚂 new connection`;
 const str_messageRequest = `🚗 new request`;
 const str_contentType = `Content-Type`;
 const str_contentTypeText = `text/plain`;
 
-const server = http.createServer();
+const fun_listeningListener = () => {
+  console.log(str_messageStart)
+}
 
-server.on(`connection`, () => {
-  console.log(str_messageConnection);
-})
-
-server.on(`request`, (req, res) => {
+const fun_requestListener = (incomingMessage, serverResponse) => {
   console.log(str_messageRequest);
 
-  switch (req.method) {
+  switch (incomingMessage.method) {
     case str_methodGet:
       console.log(str_methodGet);
-      res.setHeader(str_contentType, str_contentTypeText);
-      res.writeHead(num_statusOk);
-      res.end(`${ str_methodGet } ${ str_messageOk }`);
+      serverResponse.setHeader(str_contentType, str_contentTypeText);
+      serverResponse.statusCode = num_statusOk;
+      serverResponse.end(`${ str_methodGet } ${ str_messageOk }`);
     break;
 
     case str_methodPost:
       console.log(str_methodPost);
-      res.setHeader(str_contentType, str_contentTypeText);
-      res.writeHead(num_statusOk);
-      res.end(`${ str_methodPost } ${ str_messageOk }`);
+      serverResponse.setHeader(str_contentType, str_contentTypeText);
+      serverResponse.statusCode = num_statusOk;
+      serverResponse.end(`${ str_methodPost } ${ str_messageOk }`);
     break;
 
     default:
-      console.log(req.method);
-      res.setHeader(str_contentType, str_contentTypeText);
-      res.writeHead(num_statusIncorrect);
-      res.end(str_messageIncorrect);
+      console.log(incomingMessage.method);
+      serverResponse.setHeader(str_contentType, str_contentTypeText);
+      serverResponse.statusCode = num_statusIncorrect;
+      serverResponse.end(str_messageIncorrect);
     break;
   }
-});
+}
 
-server.listen(num_port, str_host, () => console.log(str_messageStart));
+const server = http.createServer(fun_requestListener);
+
+server.listen(
+  num_port,
+  str_host,
+  fun_listeningListener,
+);
