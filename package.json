@@ -15,5 +15,8 @@
   },
   "devDependencies": {
     "eslint": "8.36.0"
+  },
+  "dependencies": {
+    "pg": "8.10.0"
   }
 }
