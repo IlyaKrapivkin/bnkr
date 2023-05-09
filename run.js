@@ -1,15 +1,19 @@
 const http = require(`http`);
+const dotenv = require(`dotenv`);
 const config = require(`./package.json`);
+const { Client } = require(`pg`);
 
-const num_port = 3001;
+const num_portServer = 3001;
 const num_statusOk = 200;
 const num_statusUnauthorized = 401;
 const num_statusNotFound = 404;
 const num_methodNotAllowed = 405;
-const str_host = `127.0.0.1`;
+const str_hostServer = `127.0.0.1`;
 const str_methodGet = `GET`;
 const str_methodPost = `POST`;
-const str_messageStart = `🚀 server started on port [${ num_port }]\n`;
+const str_messageStart = `🚀 server started`;
+const str_messageDbConnected = `📚 database connected`;
+const str_messageError = `❌`;
 const str_iconRequest = `🚗`;
 const str_headerContentType = `Content-Type`;
 const str_headerAuthorization = `authorization`;
@@ -21,8 +25,44 @@ const str_notFound = `NOT FOUND`;
 const str_unauthorized = `UNAUTHORIZED`;
 const str_methodNotAllowed = `METHOD NOT ALLOWED`;
 
-const fun_listeningListener = () => {
-  console.log(str_messageStart)
+const fun_listeningListener = async () => {
+  dotenv.config();
+
+  const str_messageStartExtended = ``.concat(
+    str_messageStart,
+    ` [${str_hostServer}:${num_portServer}]`,
+  );
+  console.log(str_messageStartExtended);
+
+  try {
+    const obj_clientPg = new Client(
+      {
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: +process.env.PGPORT,
+      }
+    );
+
+    await obj_clientPg.connect();
+
+    const any_resDb = await obj_clientPg.query(`SELECT version();`);
+
+    if (any_resDb) {
+      await obj_clientPg.end();
+      const str_messageDbConnectedExtended = ``.concat(
+        str_messageDbConnected,
+        ` [${process.env.PGDATABASE}]`,
+        ` [${process.env.PGHOST}:${process.env.PGPORT}]`,
+      );
+      console.log(str_messageDbConnectedExtended)
+    } else {
+      throw `version-requset unsuccessful`
+    }
+  } catch (catchedError) {
+    console.log(`${str_messageError} cannot connect to database${catchedError ? `:${catchedError}` : ``}`);
+  }
 }
 
 const server = http.createServer((incomingMessage, serverResponse) => {
@@ -85,7 +125,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
 })
 
 server.listen(
-  num_port,
-  str_host,
+  num_portServer,
+  str_hostServer,
   fun_listeningListener,
 );
