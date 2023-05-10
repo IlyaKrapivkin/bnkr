@@ -33,6 +33,9 @@ const obj_store = {
     str_iconServer: `🚀`,
     str_iconDb: `📚`,
   },
+  obj_sign: {
+    str_space: ` `,
+  },
   obj_messageShort: {
     str_pong: `PONG`,
     str_notFound: `NOT FOUND`,
@@ -42,7 +45,18 @@ const obj_store = {
   obj_messageLong: {
     str_servStart: `server started`,
     str_dbConnect: `database connected`,
+    str_dbNoConnect: `cannot connect to database`,
   },
 };
 
-exports.obj_store = obj_store;
+exports.obj_host = obj_store.obj_host;
+exports.obj_port = obj_store.obj_port;
+exports.obj_methodHttp = obj_store.obj_methodHttp;
+exports.obj_statusHttp = obj_store.obj_statusHttp;
+exports.obj_headerNameHttp = obj_store.obj_headerNameHttp;
+exports.obj_headerValueHttp = obj_store.obj_headerValueHttp;
+exports.obj_route = obj_store.obj_route;
+exports.obj_icon = obj_store.obj_icon;
+exports.obj_sign = obj_store.obj_sign;
+exports.obj_messageShort = obj_store.obj_messageShort;
+exports.obj_messageLong = obj_store.obj_messageLong;
