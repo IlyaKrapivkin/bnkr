@@ -1,9 +1,9 @@
-CREATE TABLE "session" (
+CREATE TABLE IF NOT EXISTS "session" (
   id BIGINT NOT NULL,
   user_id BIGINT NOT NULL,
   alive BOOLEAN NOT NULL DEFAULT TRUE,
-  code VARCHAR(256) NOT NULL,
-  CONSTRAINT pkey_session_id PRIMARY KEY,
+  code VARCHAR (256) NOT NULL,
+  CONSTRAINT pkey_session_id PRIMARY KEY (id),
   CONSTRAINT fkey_session_userid FOREIGN KEY (user_id) REFERENCES "agent" (id)
 );
 
