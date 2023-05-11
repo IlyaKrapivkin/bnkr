@@ -35,6 +35,9 @@ const obj_store = {
   },
   obj_sign: {
     str_space: ` `,
+    str_newline: `\n`,
+    str_bslash: `\\`,
+    str_slash: `/`,
   },
   obj_messageShort: {
     str_pong: `PONG`,

@@ -1,5 +1,5 @@
 const http = require(`http`);
-const dotenv = require(`dotenv`);
+const fs = require(`fs`);
 const { Client } = require(`pg`);
 
 const config = require(`./package.json`);
@@ -17,9 +17,9 @@ const {
   obj_messageLong,
 } = require(`./store.js`);
 
-const fun_listeningListener = async () => {
-  dotenv.config();
+const fun_bfrToObj = require(`./service/bfrToObj.js`);
 
+const fun_listeningListener = async () => {
   const str_messageStartExtended = ``.concat(
     obj_icon.str_iconServer,
     obj_sign.str_space,
@@ -28,6 +28,22 @@ const fun_listeningListener = async () => {
     `[${obj_host.str_hostServer}:${obj_port.num_portServer}]`,
   );
   console.log(str_messageStartExtended);
+
+  const str_pathEnvFile = ``.concat(
+    __dirname,
+    obj_sign.str_slash,
+    `.env`,
+  );
+  const bfr_envCustom = fs.readFileSync(str_pathEnvFile);
+  const obj_envCustom = fun_bfrToObj(bfr_envCustom, false);
+  Object.keys(obj_envCustom).map(key => {
+    if (
+      !process.env[key] ||
+      process.env[key] !== obj_envCustom[key]
+    ) {
+      process.env[key] = obj_envCustom[key];
+    }
+  });
 
   try {
     const obj_clientPg = new Client(
@@ -44,7 +60,7 @@ const fun_listeningListener = async () => {
 
     const any_resDb = await obj_clientPg.query(`SELECT version();`);
 
-    if (any_resDb) {
+    if (any_resDb && any_resDb.rows) {
       await obj_clientPg.end();
       const str_messageDbConnectedExtended = ``.concat(
         obj_icon.str_iconDb,
