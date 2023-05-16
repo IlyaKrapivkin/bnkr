@@ -1,6 +1,5 @@
 const http = require(`http`);
 const fs = require(`fs`);
-const { Client } = require(`pg`);
 
 const config = require(`./package.json`);
 const {
@@ -18,8 +17,10 @@ const {
 } = require(`./store.js`);
 
 const fun_bfrToObj = require(`./service/bfrToObj.js`);
+const fun_query = require(`./database/database.js`);
 
-const fun_listeningListener = async () => {
+const fun_startListener = async () => {
+  // message about starting server
   const str_messageStartExtended = ``.concat(
     obj_icon.str_iconServer,
     obj_sign.str_space,
@@ -28,7 +29,7 @@ const fun_listeningListener = async () => {
     `[${obj_host.str_hostServer}:${obj_port.num_portServer}]`,
   );
   console.log(str_messageStartExtended);
-
+  // adding hide parameters to global config
   const str_pathEnvFile = ``.concat(
     __dirname,
     obj_sign.str_slash,
@@ -44,63 +45,54 @@ const fun_listeningListener = async () => {
       process.env[key] = obj_envCustom[key];
     }
   });
-
-  try {
-    const obj_clientPg = new Client(
-      {
-        user: process.env.PGUSER,
-        host: process.env.PGHOST,
-        database: process.env.PGDATABASE,
-        password: process.env.PGPASSWORD,
-        port: +process.env.PGPORT,
-      }
+  // connection to database
+  const any_resDb = await fun_query(
+    `SELECT version();`,
+    [],
+  );
+  const str_versionDb = any_resDb?.rows?.[0]?.version;
+  if (
+    str_versionDb &&
+    typeof str_versionDb === `string` &&
+    str_versionDb.length
+  ) {
+    const str_versionDbShort = `${str_versionDb.slice(0, 16)}...`;
+    const str_messageDbConnectedExtended = ``.concat(
+      obj_icon.str_iconDb,
+      obj_sign.str_space,
+      obj_messageLong.str_dbConnect,
+      obj_sign.str_space,
+      `[${process.env.PGDATABASE}]`,
+      obj_sign.str_space,
+      `[${process.env.PGHOST}:${process.env.PGPORT}]`,
+      obj_sign.str_space,
+      `[${str_versionDbShort}]`,
     );
-
-    await obj_clientPg.connect();
-
-    const any_resDb = await obj_clientPg.query(`SELECT version();`);
-
-    if (any_resDb && any_resDb.rows) {
-      await obj_clientPg.end();
-      const str_messageDbConnectedExtended = ``.concat(
-        obj_icon.str_iconDb,
-        obj_sign.str_space,
-        obj_messageLong.str_dbConnect,
-        obj_sign.str_space,
-        `[${process.env.PGDATABASE}]`,
-        obj_sign.str_space,
-        `[${process.env.PGHOST}:${process.env.PGPORT}]`,
-      );
-      console.log(str_messageDbConnectedExtended)
-    } else {
-      throw `version-requset unsuccessful`
-    }
-  } catch (catchedError) {
+    console.log(str_messageDbConnectedExtended);
+  } else {
     const str_errorLocal = ``.concat(
       obj_icon.str_iconError,
       obj_sign.str_space,
       obj_messageLong.str_dbNoConnect,
-      (
-        catchedError && catchedError?.message ?
-        `:${catchedError.message}` :
-        ``
-      ),
     )
-    console.log(str_errorLocal);
+    console.error(str_errorLocal);
   }
+  // server was successfully started
+  console.log(obj_sign.str_newline);
 }
 
 const server = http.createServer((incomingMessage, serverResponse) => {
+  // message about catching request
   const str_logRequestStart = ``.concat(
     obj_icon.str_iconRequest,
     obj_sign.str_space,
     `[${incomingMessage.method}]`,
     obj_sign.str_space,
     `[${incomingMessage.url}]`,
-  )
+  );
   console.log(str_logRequestStart);
-
-  const str_headerName = obj_headerNameHttp.str_headerAuthorization.toLowerCase()
+  // check of request authorization
+  const str_headerName = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
   const any_sessionInitial = incomingMessage.headers[str_headerName];
   const str_session = (
     (
@@ -112,7 +104,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
     ``
   );
   const bol_authorized = (str_session === `12345`);
-
+  // handling request by method and route
   switch (incomingMessage.method) {
     case obj_methodHttp.str_methodGet:
       switch (incomingMessage.url) {
@@ -179,10 +171,10 @@ const server = http.createServer((incomingMessage, serverResponse) => {
       serverResponse.end(obj_messageShort.str_methodNotAllowed);
     break;
   }
-})
+});
 
 server.listen(
   obj_port.num_portServer,
   obj_host.str_hostServer,
-  fun_listeningListener,
+  fun_startListener,
 );
