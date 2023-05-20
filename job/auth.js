@@ -1,5 +1,6 @@
 const { obj_error } = require(`../store.js`);
 const fun_query = require(`../database/database.js`);
+const str_sqlAgentBySession = require(`../database/request/agentBySession.js`);
 
 module.exports = async (
   session,
@@ -17,24 +18,7 @@ module.exports = async (
     )
     if (str_session) {
       const any_resDb = await fun_query(
-        `
-          SELECT
-            agn.id,
-            ssn.id AS ssn_id,
-            agn.login,
-            agn.password,
-            agn.alias,
-            agn.email,
-            agn.phone
-          FROM
-            session ssn
-          INNER JOIN agent agn ON (
-            agn.id = ssn.agent_id
-            AND agn.alive = TRUE
-          )
-          WHERE ssn.code = $1
-          AND ssn.alive = TRUE;
-        `,
+        str_sqlAgentBySession,
         [str_session],
       );
       const any_agent = any_resDb?.rows?.[0];

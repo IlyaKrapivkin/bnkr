@@ -16,6 +16,8 @@ const {
   obj_messageLong,
 } = require(`./store.js`);
 
+const str_sqlVersion = require(`./database/request/version.js`);
+
 const fun_query = require(`./database/database.js`);
 
 const fun_auth = require(`./job/auth.js`);
@@ -52,7 +54,7 @@ const fun_startListener = async () => {
 
   // connection to database
   const any_resDb = await fun_query(
-    `SELECT version();`,
+    str_sqlVersion,
     [],
   );
   const str_versionDb = any_resDb?.rows?.[0]?.version;
