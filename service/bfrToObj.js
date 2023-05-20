@@ -61,7 +61,7 @@ module.exports = (
     const str_error = error?.message || error?.toString() || ``;
     
     if (allowError) {
-      throw `Ошибка сервиса: [${str_error}]`;
+      throw `Catched from service: [${str_error}]`;
     } else {
       return {};
     }

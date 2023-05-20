@@ -13,6 +13,7 @@ const obj_store = {
   obj_statusHttp: {
     num_statusOk: 200,
     num_statusUnauthorized: 401,
+    num_statusWrongAuthorized: 403,
     num_statusNotFound: 404,
     num_methodNotAllowed: 405,
   },
@@ -26,6 +27,7 @@ const obj_store = {
   obj_route: {
     str_routePing: `/ping`,
     str_routeInfoApp: `/infoApp`,
+    str_routeRegAgent: `/registerAgent`,
   },
   obj_icon: {
     str_iconError: `❌`,
@@ -43,12 +45,16 @@ const obj_store = {
     str_pong: `PONG`,
     str_notFound: `NOT FOUND`,
     str_unauthorized: `UNAUTHORIZED`,
+    str_needNoAuth: `NOT ALLOWED FOR AUTHORIZED`,
     str_methodNotAllowed: `METHOD NOT ALLOWED`,
   },
   obj_messageLong: {
     str_servStart: `server started`,
     str_dbConnect: `database connected`,
     str_dbNoConnect: `cannot connect to database`,
+  },
+  obj_error: {
+    str_sessionIncorrect: `session code is incorrect`,
   },
 };
 
@@ -63,3 +69,4 @@ exports.obj_icon = obj_store.obj_icon;
 exports.obj_sign = obj_store.obj_sign;
 exports.obj_messageShort = obj_store.obj_messageShort;
 exports.obj_messageLong = obj_store.obj_messageLong;
+exports.obj_error = obj_store.obj_error;

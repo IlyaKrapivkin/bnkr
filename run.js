@@ -16,8 +16,11 @@ const {
   obj_messageLong,
 } = require(`./store.js`);
 
-const fun_bfrToObj = require(`./service/bfrToObj.js`);
 const fun_query = require(`./database/database.js`);
+
+const fun_auth = require(`./job/auth.js`);
+
+const fun_bfrToObj = require(`./service/bfrToObj.js`);
 
 const fun_startListener = async () => {
   // message about starting server
@@ -29,6 +32,7 @@ const fun_startListener = async () => {
     `[${obj_host.str_hostServer}:${obj_port.num_portServer}]`,
   );
   console.log(str_messageStartExtended);
+
   // adding hide parameters to global config
   const str_pathEnvFile = ``.concat(
     __dirname,
@@ -45,6 +49,7 @@ const fun_startListener = async () => {
       process.env[key] = obj_envCustom[key];
     }
   });
+
   // connection to database
   const any_resDb = await fun_query(
     `SELECT version();`,
@@ -77,11 +82,12 @@ const fun_startListener = async () => {
     )
     console.error(str_errorLocal);
   }
+
   // server was successfully started
   console.log(obj_sign.str_newline);
 }
 
-const server = http.createServer((incomingMessage, serverResponse) => {
+const server = http.createServer(async (incomingMessage, serverResponse) => {
   // message about catching request
   const str_logRequestStart = ``.concat(
     obj_icon.str_iconRequest,
@@ -91,19 +97,13 @@ const server = http.createServer((incomingMessage, serverResponse) => {
     `[${incomingMessage.url}]`,
   );
   console.log(str_logRequestStart);
+
   // check of request authorization
-  const str_headerName = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
-  const any_sessionInitial = incomingMessage.headers[str_headerName];
-  const str_session = (
-    (
-      any_sessionInitial &&
-      typeof any_sessionInitial === `string` &&
-      any_sessionInitial.length
-    ) ?
-    any_sessionInitial :
-    ``
-  );
-  const bol_authorized = (str_session === `12345`);
+  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
+  const any_sessionInitial = incomingMessage.headers[str_headerNameAuth];
+  const obj_agent = await fun_auth(any_sessionInitial, false);
+  const bol_authorized = !!(obj_agent && obj_agent.id);
+  
   // handling request by method and route
   switch (incomingMessage.method) {
     case obj_methodHttp.str_methodGet:
@@ -111,7 +111,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
         case obj_route.str_routePing:
           serverResponse.setHeader(
             obj_headerNameHttp.str_headerContentType,
-            obj_headerValueHttp.str_headerValueText
+            obj_headerValueHttp.str_headerValueText,
           );
           serverResponse.statusCode = obj_statusHttp.num_statusOk;
           serverResponse.end(obj_messageShort.str_pong);
@@ -121,7 +121,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
           if (bol_authorized) {
             serverResponse.setHeader(
               obj_headerNameHttp.str_headerContentType,
-              obj_headerValueHttp.str_headerValueText
+              obj_headerValueHttp.str_headerValueText,
             );
             serverResponse.statusCode = obj_statusHttp.num_statusOk;
             const str_infoApp = ``.concat(
@@ -135,7 +135,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
           } else {
             serverResponse.setHeader(
               obj_headerNameHttp.str_headerContentType,
-              obj_headerValueHttp.str_headerValueText
+              obj_headerValueHttp.str_headerValueText,
             );
             serverResponse.statusCode = obj_statusHttp.num_statusUnauthorized;
             serverResponse.end(obj_messageShort.str_unauthorized);
@@ -145,7 +145,7 @@ const server = http.createServer((incomingMessage, serverResponse) => {
         default:
           serverResponse.setHeader(
             obj_headerNameHttp.str_headerContentType,
-            obj_headerValueHttp.str_headerValueText
+            obj_headerValueHttp.str_headerValueText,
           );
           serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
           serverResponse.end(obj_messageShort.str_notFound);
@@ -154,12 +154,35 @@ const server = http.createServer((incomingMessage, serverResponse) => {
     break;
 
     case obj_methodHttp.str_methodPost:
-      serverResponse.setHeader(
-        obj_headerNameHttp.str_headerContentType,
-        obj_headerValueHttp.str_headerValueText
-      );
-      serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
-      serverResponse.end(obj_messageShort.str_notFound);
+      switch (incomingMessage.url) {
+        case obj_route.str_routeRegAgent:
+          if (bol_authorized) {
+            serverResponse.setHeader(
+              obj_headerNameHttp.str_headerContentType,
+              obj_headerValueHttp.str_headerValueText,
+            );
+            serverResponse.statusCode = obj_statusHttp.num_statusWrongAuthorized;
+            serverResponse.end(obj_messageShort.str_needNoAuth);
+          } else {
+            //TODO
+            serverResponse.setHeader(
+              obj_headerNameHttp.str_headerContentType,
+              obj_headerValueHttp.str_headerValueText,
+            );
+            serverResponse.statusCode = obj_statusHttp.num_statusOk;
+            serverResponse.end(obj_messageShort.str_pong);
+          }
+        break;
+
+        default:
+          serverResponse.setHeader(
+            obj_headerNameHttp.str_headerContentType,
+            obj_headerValueHttp.str_headerValueText,
+          );
+          serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
+          serverResponse.end(obj_messageShort.str_notFound);
+        break;
+      }
     break;
 
     default:
