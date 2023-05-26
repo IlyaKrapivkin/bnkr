@@ -16,9 +16,9 @@ const {
   obj_messageLong,
 } = require(`./store.js`);
 
-const str_sqlVersion = require(`./database/request/version.js`);
+const str_sqlVersion = require(`./external/database/request/version.js`);
 
-const fun_query = require(`./database/database.js`);
+const fun_query = require(`./external/database/database.js`);
 
 const fun_auth = require(`./job/auth.js`);
 

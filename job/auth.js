@@ -1,6 +1,6 @@
 const { obj_error } = require(`../store.js`);
-const fun_query = require(`../database/database.js`);
-const str_sqlAgentBySession = require(`../database/request/agentBySession.js`);
+const fun_query = require(`../external/database/database.js`);
+const str_sqlAgentBySession = require(`../external/database/request/agentBySession.js`);
 
 module.exports = async (
   session,
@@ -23,7 +23,7 @@ module.exports = async (
         [str_session],
         false,
       );
-      
+
       const any_agent = arr_resDb[0];
       console.log(any_agent);
 
