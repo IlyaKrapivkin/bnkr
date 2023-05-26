@@ -12,8 +12,7 @@ module.exports = (
 
     if (
       bfr &&
-      typeof bfr === `object` &&
-      bfr !== null
+      typeof bfr === `object`
     ) {
       bfr.toString().split(reg_newlineMatch).forEach((line) => {
         const arr_keyVal = line.match(reg_keyVal);
@@ -52,7 +51,7 @@ module.exports = (
       return obj_final;
     } else {
       if (allowError) {
-        throw `неуспешная конвертация bufffer -> string`;
+        throw `cannot convert bufffer -> string`;
       } else {
         return {};
       }

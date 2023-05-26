@@ -15,18 +15,22 @@ module.exports = async (
       ) ?
       session.toLowerCase().trim() :
       ``
-    )
+    );
+
     if (str_session) {
-      const any_resDb = await fun_query(
+      const arr_resDb = await fun_query(
         str_sqlAgentBySession,
         [str_session],
+        false,
       );
-      const any_agent = any_resDb?.rows?.[0];
+      
+      const any_agent = arr_resDb[0];
       console.log(any_agent);
+
       if (any_agent && any_agent.id) {
         const obj_agent = {
           id: any_agent.id,
-          ssn_id: any_agent.ssn_id,
+          session_id: any_agent.ssn_id,
           login: any_agent.login,
           password: any_agent.password,
           alias: any_agent.alias,
@@ -36,8 +40,9 @@ module.exports = async (
         return obj_agent;
       }
     }
+    
     if (allowError) {
-      throw obj_error.str_error;
+      throw obj_error.str_sessionIncorrect;
     } else {
       return {};
     }

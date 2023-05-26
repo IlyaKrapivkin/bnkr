@@ -53,11 +53,11 @@ const fun_startListener = async () => {
   });
 
   // connection to database
-  const any_resDb = await fun_query(
+  const arr_resDb = await fun_query(
     str_sqlVersion,
     [],
   );
-  const str_versionDb = any_resDb?.rows?.[0]?.version;
+  const str_versionDb = arr_resDb[0]?.version;
   if (
     str_versionDb &&
     typeof str_versionDb === `string` &&

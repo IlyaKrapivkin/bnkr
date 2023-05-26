@@ -3,8 +3,24 @@ const { Client } = require(`pg`);
 module.exports = async (
   sql,
   parameters,
+  allowError,
 ) => {
   try {
+    if (
+      !sql ||
+      typeof sql !== `string`
+    ) {
+      throw `Incorrect input: argument sql[${sql}]`;
+    }
+
+    if (
+      !parameters ||
+      typeof parameters !== `object` ||
+      isNaN(parameters.length)
+    ) {
+      throw `Incorrect input: argument parameters[${parameters}]`;
+    }
+
     const obj_clientPg = new Client(
       {
         user: process.env.PGUSER,
@@ -28,10 +44,28 @@ module.exports = async (
 
     await obj_clientPg.end();
 
-    return any_res;
+    const arr_resRows = any_res?.rows;
+
+    if (
+      !arr_resRows ||
+      typeof arr_resRows !== `object` ||
+      isNaN(arr_resRows.length)
+    ) {
+      if (allowError) {
+        throw `Incorrect database answer`;
+      } else {
+        return [];
+      }
+    } else {
+      return arr_resRows;
+    }
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
-    console.error(str_error);
-    return null;
+
+    if (allowError) {
+      throw `Catched from database: [${str_error}]`;
+    } else {
+      return [];
+    }
   }
 }
