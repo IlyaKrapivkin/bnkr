@@ -59,6 +59,7 @@ const obj_store = {
     str_inputLogin: `incorrect login in input`,
     str_inputPassword: `incorrect password in input`,
     str_agentSame: `same agent already exists`,
+    str_insert: `cannot insert new row into DB`,
   },
 };
 

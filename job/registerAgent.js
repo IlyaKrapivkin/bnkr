@@ -4,6 +4,7 @@ const fun_strToPhone = require(`../service/strToPhone.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
 const fun_query = require(`../external/database/database.js`);
 const str_sqlAgentByLogin = require(`../external/database/request/agentByLogin.js`);
+const str_sqlInsertAgent = require(`../external/database/request/insertAgent.js`);
 
 module.exports = async (
   login,
@@ -12,7 +13,12 @@ module.exports = async (
   allowError,
 ) => {
   try {
-    if (!alias) {
+    const str_aliasChecked = (
+      (alias && typeof alias === `string`) ?
+      alias.trim().toLowerCase() :
+      ``
+    )
+    if (!str_aliasChecked) {
       throw obj_error.alias;
     }
 
@@ -45,18 +51,34 @@ module.exports = async (
     }
 
 
-    const arr_resDb = await fun_query(
+    const arr_resDbAgentSame = await fun_query(
       str_sqlAgentByLogin,
       [str_loginChecked],
       false,
     );
 
-    const any_agentSame = arr_resDb[0];
+    const any_agentSame = arr_resDbAgentSame[0];
 
     if (any_agentSame && any_agentSame.id) {
       throw obj_error.str_agentSame;
     }
-    
+
+    const arr_resDbAgentNew = await fun_query(
+      str_sqlInsertAgent,
+      [
+        str_aliasChecked,
+        str_loginChecked,
+        password,
+        str_emailByLogin || null,
+        str_phoneByLogin || null,
+      ],
+      true,
+    );
+    const num_agentId = arr_resDbAgentNew[0].id;
+    if (!num_agentId) {
+      throw obj_error.str_insert;
+    }
+
     //TODO
     throw `ANY`;
   } catch (error) {
