@@ -15,11 +15,7 @@ module.exports = (
       }
     }
 
-    if (allowError) {
-      throw `cannot convert str -> phoneMobRus str`;
-    } else {
-      return ``;
-    }
+    throw `cannot convert str -> phoneMobRus str`;
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
     

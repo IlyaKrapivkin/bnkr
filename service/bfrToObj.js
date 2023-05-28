@@ -50,11 +50,7 @@ module.exports = (
 
       return obj_final;
     } else {
-      if (allowError) {
-        throw `cannot convert bufffer -> string`;
-      } else {
-        return {};
-      }
+      throw `cannot convert bufffer -> string`;
     }
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;

@@ -54,7 +54,11 @@ const obj_store = {
     str_dbNoConnect: `cannot connect to database`,
   },
   obj_error: {
-    str_sessionIncorrect: `session code is incorrect`,
+    str_session: `session code is incorrect`,
+    str_inputAlias: `incorrect alias in input`,
+    str_inputLogin: `incorrect login in input`,
+    str_inputPassword: `incorrect password in input`,
+    str_agentSame: `same agent already exists`,
   },
 };
 

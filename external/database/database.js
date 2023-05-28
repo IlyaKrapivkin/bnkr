@@ -51,11 +51,7 @@ module.exports = async (
       typeof arr_resRows !== `object` ||
       isNaN(arr_resRows.length)
     ) {
-      if (allowError) {
-        throw `Incorrect database answer`;
-      } else {
-        return [];
-      }
+      throw `Incorrect database answer`;
     } else {
       return arr_resRows;
     }

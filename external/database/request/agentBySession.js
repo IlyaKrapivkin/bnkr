@@ -15,5 +15,6 @@ INNER JOIN agent agn ON (
 )
 WHERE ssn.code = $1
 AND ssn.alive = TRUE;
+
 --$1::VARCHAR
 `;

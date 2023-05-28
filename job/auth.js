@@ -41,11 +41,7 @@ module.exports = async (
       }
     }
     
-    if (allowError) {
-      throw obj_error.str_sessionIncorrect;
-    } else {
-      return {};
-    }
+    throw obj_error.str_session;
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
     if (allowError) {
