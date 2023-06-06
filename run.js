@@ -21,6 +21,7 @@ const str_sqlVersion = require(`./external/database/request/version.js`);
 const fun_query = require(`./external/database/database.js`);
 
 const fun_auth = require(`./job/auth.js`);
+const fun_registerAgent = require(`./job/registerAgent`);
 
 const fun_bfrToObj = require(`./service/bfrToObj.js`);
 
@@ -101,7 +102,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   console.log(str_logRequestStart);
 
   // check of request authorization
-  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
+  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();//TODO: place Req argument to job
   const any_sessionInitial = incomingMessage.headers[str_headerNameAuth];
   const obj_agent = await fun_auth(any_sessionInitial, false);
   const bol_authorized = !!(obj_agent && obj_agent.id);
@@ -111,7 +112,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
     case obj_methodHttp.str_methodGet:
       switch (incomingMessage.url) {
         case obj_route.str_routePing:
-          serverResponse.setHeader(
+          serverResponse.setHeadincomingMessageer(
             obj_headerNameHttp.str_headerContentType,
             obj_headerValueHttp.str_headerValueText,
           );
@@ -167,12 +168,29 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
             serverResponse.end(obj_messageShort.str_needNoAuth);
           } else {
             //TODO
-            serverResponse.setHeader(
-              obj_headerNameHttp.str_headerContentType,
-              obj_headerValueHttp.str_headerValueText,
+            console.log(incomingMessage);
+            const num_agentNewId = await fun_registerAgent(
+              incomingMessage?.login,
+              incomingMessage?.password,
+              incomingMessage?.alias,
+              false,
             );
-            serverResponse.statusCode = obj_statusHttp.num_statusOk;
-            serverResponse.end(obj_messageShort.str_pong);
+
+            if (num_agentNewId) {
+              serverResponse.setHeader(
+                obj_headerNameHttp.str_headerContentType,
+                obj_headerValueHttp.str_headerValueText,
+              );
+              serverResponse.statusCode = obj_statusHttp.num_statusOk;
+              serverResponse.end(obj_messageShort.str_ok);
+            } else {
+              serverResponse.setHeader(
+                obj_headerNameHttp.str_headerContentType,
+                obj_headerValueHttp.str_headerValueText,
+              );
+              serverResponse.statusCode = obj_statusHttp.num_serverError;
+              serverResponse.end(obj_messageShort.str_notOK);
+            }
           }
         break;
 

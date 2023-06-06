@@ -16,6 +16,7 @@ const obj_store = {
     num_statusWrongAuthorized: 403,
     num_statusNotFound: 404,
     num_methodNotAllowed: 405,
+    num_serverError: 500,
   },
   obj_headerNameHttp: {
     str_headerContentType: `Content-Type`,
@@ -28,6 +29,10 @@ const obj_store = {
     str_routePing: `/ping`,
     str_routeInfoApp: `/infoApp`,
     str_routeRegAgent: `/registerAgent`,
+  },
+  obj_encoding: {
+    str_utf: `utf8`,
+    str_base: `base64`,
   },
   obj_icon: {
     str_iconError: `❌`,
@@ -42,6 +47,8 @@ const obj_store = {
     str_slash: `/`,
   },
   obj_messageShort: {
+    str_ok: `OK`,
+    str_notOK: `NOT OK`,
     str_pong: `PONG`,
     str_notFound: `NOT FOUND`,
     str_unauthorized: `UNAUTHORIZED`,
@@ -70,6 +77,7 @@ exports.obj_statusHttp = obj_store.obj_statusHttp;
 exports.obj_headerNameHttp = obj_store.obj_headerNameHttp;
 exports.obj_headerValueHttp = obj_store.obj_headerValueHttp;
 exports.obj_route = obj_store.obj_route;
+exports.obj_encoding = obj_store.obj_encoding;
 exports.obj_icon = obj_store.obj_icon;
 exports.obj_sign = obj_store.obj_sign;
 exports.obj_messageShort = obj_store.obj_messageShort;

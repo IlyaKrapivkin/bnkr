@@ -49,9 +49,9 @@ module.exports = (
       });
 
       return obj_final;
-    } else {
-      throw `cannot convert bufffer -> string`;
     }
+
+    throw `cannot convert bufffer -> object`;
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
     

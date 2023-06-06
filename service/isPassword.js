@@ -12,9 +12,9 @@ module.exports = (
       allowCyrillic && reg_latinAndCyrillic(password)
     ) {
       return true;
-    } else {
-      throw `incorrect password`;
     }
+
+    throw `incorrect password`;
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
     

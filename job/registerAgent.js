@@ -1,6 +1,7 @@
 const { obj_error } = require(`../store.js`);
 const fun_strToEmail = require(`../service/strToEmail.js`);
 const fun_strToPhone = require(`../service/strToPhone.js`);
+const fun_strToSbfr = require(`../service/strToSbfr.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
 const fun_query = require(`../external/database/database.js`);
 const str_sqlAgentByLogin = require(`../external/database/request/agentByLogin.js`);
@@ -37,8 +38,7 @@ module.exports = async (
 
     if (
       !str_loginInitial ||
-      !str_emailByLogin && !str_phoneByLogin ||
-      str_emailByLogin && str_phoneByLogin
+      !str_emailByLogin && !str_phoneByLogin
     ) {
       throw obj_error.login;
     }
@@ -49,6 +49,8 @@ module.exports = async (
     if (!fun_isPassword(password)) {
       throw obj_error.str_inputPassword;
     }
+
+    const str_passCrypted = fun_strToSbfr(password);
 
 
     const arr_resDbAgentSame = await fun_query(
@@ -63,30 +65,31 @@ module.exports = async (
       throw obj_error.str_agentSame;
     }
 
+    //TODO code sending
+
     const arr_resDbAgentNew = await fun_query(
       str_sqlInsertAgent,
       [
         str_aliasChecked,
         str_loginChecked,
-        password,
+        str_passCrypted,
         str_emailByLogin || null,
         str_phoneByLogin || null,
       ],
       true,
     );
     const num_agentId = arr_resDbAgentNew[0].id;
-    if (!num_agentId) {
-      throw obj_error.str_insert;
+    if (num_agentId) {
+      return num_agentId;
     }
 
-    //TODO
-    throw `ANY`;
+    throw `ANY`;//TODO
   } catch (error) {
     const str_error = error?.message || error?.toString() || ``;
     if (allowError) {
       throw `Catched from job: [${str_error}]`;
     } else {
-      return {};
+      return 0;
     }
   }
 }
