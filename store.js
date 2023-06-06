@@ -34,6 +34,16 @@ const obj_store = {
     str_utf: `utf8`,
     str_base: `base64`,
   },
+  obj_typeof: {
+    str_typeBol: `boolean`,
+    str_typeNum: `number`,
+    str_typeBgn: `bigint`,
+    str_typeStr: `string`,
+    str_typeSmb: `symbol`,
+    str_typeNdf: `undefined`,
+    str_typeFun: `function`,
+    str_typeObj: `object`,
+  },
   obj_icon: {
     str_iconError: `❌`,
     str_iconRequest: `🚗`,
@@ -45,6 +55,9 @@ const obj_store = {
     str_newline: `\n`,
     str_bslash: `\\`,
     str_slash: `/`,
+    str_empty: ``,
+    str_squot: `'`,
+    str_dquot: `"`,
   },
   obj_messageShort: {
     str_ok: `OK`,
@@ -61,13 +74,20 @@ const obj_store = {
     str_dbNoConnect: `cannot connect to database`,
   },
   obj_error: {
+    str_catchService: `catched from service`,
     str_session: `session code is incorrect`,
     str_inputAlias: `incorrect alias in input`,
     str_inputLogin: `incorrect login in input`,
     str_inputPassword: `incorrect password in input`,
     str_agentSame: `same agent already exists`,
     str_insert: `cannot insert new row into DB`,
+    str_bfrToObj: `cannot convert bufffer to object`,
   },
+  obj_regexp: {
+    reg_newlineMatch: /\r\n|\n|\r/,
+    reg_keyVal: /^\s*([\w.-]+)\s*=\s*(.*)?\s*$/,
+    reg_newlineMany: /\\n/g,
+  }
 };
 
 exports.obj_host = obj_store.obj_host;
@@ -78,8 +98,10 @@ exports.obj_headerNameHttp = obj_store.obj_headerNameHttp;
 exports.obj_headerValueHttp = obj_store.obj_headerValueHttp;
 exports.obj_route = obj_store.obj_route;
 exports.obj_encoding = obj_store.obj_encoding;
+exports.obj_typeof = obj_store.obj_typeof;
 exports.obj_icon = obj_store.obj_icon;
 exports.obj_sign = obj_store.obj_sign;
 exports.obj_messageShort = obj_store.obj_messageShort;
 exports.obj_messageLong = obj_store.obj_messageLong;
 exports.obj_error = obj_store.obj_error;
+exports.obj_regexp = obj_store.obj_regexp;
