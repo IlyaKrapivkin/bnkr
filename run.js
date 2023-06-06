@@ -210,7 +210,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
         obj_headerNameHttp.str_headerContentType,
         obj_headerValueHttp.str_headerValueText
       );
-      serverResponse.statusCode = obj_statusHttp.num_methodNotAllowed;
+      serverResponse.statusCode = obj_statusHttp.num_statusMethodNotAllowed;
       serverResponse.end(obj_messageShort.str_methodNotAllowed);
     break;
   }

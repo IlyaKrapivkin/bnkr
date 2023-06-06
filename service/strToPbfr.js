@@ -2,7 +2,7 @@ const {
   obj_error,
   obj_sign,
   obj_typeof,
-  obj_regexp,
+  obj_encoding,
 } = require(`../store.js`);
 
 module.exports = (
@@ -10,17 +10,17 @@ module.exports = (
   allowError,
 ) => {
   try {
-    if (
-      str &&
-      typeof str === obj_typeof.str_typeStr
-    ) {
-      const str_trimmed = str.trim().toLowerCase();
-      if (obj_regexp.reg_phoneMobRus.test(str_trimmed)) {
-        return str_trimmed.replace(obj_regexp.req_notNumbers, obj_sign.str_empty).slice(-10);
-      }
+
+    if (typeof str === obj_typeof.str_typeStr) {
+      const str_pbfr = Buffer.from(str).toString(obj_encoding.str_utf);
+
+      console.log(`===`)
+      console.log(str_pbfr)
+      
+      return str_pbfr;
     }
 
-    throw obj_error.str_strToPhoneMobRus;
+    throw obj_error.str_strToPbfr;
   } catch (error) {
     const str_error = (
       error?.message ||

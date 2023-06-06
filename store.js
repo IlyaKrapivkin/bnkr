@@ -15,7 +15,7 @@ const obj_store = {
     num_statusUnauthorized: 401,
     num_statusWrongAuthorized: 403,
     num_statusNotFound: 404,
-    num_methodNotAllowed: 405,
+    num_statusMethodNotAllowed: 405,
     num_serverError: 500,
   },
   obj_headerNameHttp: {
@@ -32,7 +32,7 @@ const obj_store = {
   },
   obj_encoding: {
     str_utf: `utf8`,
-    str_base: `base64`,
+    str_pbfr: `base64`,
   },
   obj_typeof: {
     str_typeBol: `boolean`,
@@ -74,15 +74,18 @@ const obj_store = {
     str_dbNoConnect: `cannot connect to database`,
   },
   obj_error: {
+    str_agentSame: `same agent already exists`,
     str_catchService: `catched from service`,
-    str_session: `session code is incorrect`,
     str_inputAlias: `incorrect alias in input`,
     str_inputLogin: `incorrect login in input`,
     str_inputPassword: `incorrect password in input`,
-    str_agentSame: `same agent already exists`,
+    str_password: `incorrect password`,
+    str_session: `incorrect session code`,
     str_insert: `cannot insert new row into DB`,
     str_bfrToObj: `cannot convert bufffer to object`,
-    str_password: `incorrect password`,
+    str_strToEmail: `cannot convert string to email`,
+    str_strToPhoneMobRus: `cannot convert string to phoneMobRus`,
+    str_strToPbfr: `cannot convert string to prebuffer`,
   },
   obj_regexp: {
     reg_newlineMatch: /\r\n|\n|\r/,
@@ -90,6 +93,9 @@ const obj_store = {
     reg_newlineMany: /\\n/g,
     reg_passLatin: /^[a-zA-Z0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i,
     reg_passLatinCyril: /^[a-zA-Zа-яА-Я0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i,
+    reg_email: /(^[\w+\-*&]+)((\.[\w+\-*&]+)*)(@\w+)(([.-]?\w+)*)((\.\w{2,32})+$)/,
+    reg_phoneMobRus: /^(\+7|7|8)?[\s-]?\(?[9][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/,
+    req_notNumbers: /[^\d]/g,
   }
 };
 

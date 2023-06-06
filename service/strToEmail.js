@@ -1,28 +1,38 @@
+const {
+  obj_error,
+  obj_sign,
+  obj_typeof,
+  obj_regexp,
+} = require(`../store.js`);
+
 module.exports = (
   str,
   allowError,
 ) => {
   try {
-    const reg_email = /(^[\w+\-*&]+)((\.[\w+\-*&]+)*)(@\w+)(([.-]?\w+)*)((\.\w{2,32})+$)/;
 
     if (
       str &&
-      typeof str === `string`
+      typeof str === obj_typeof.str_typeStr
     ) {
       const str_trimmed = str.trim().toLowerCase();
-      if (reg_email.test(str_trimmed)) {
+      if (obj_regexp.reg_email.test(str_trimmed)) {
         return str_trimmed;
       }
     }
 
-    throw `cannot convert str -> email str`;
+    throw obj_error.str_strToEmail;
   } catch (error) {
-    const str_error = error?.message || error?.toString() || ``;
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
     
     if (allowError) {
-      throw `Catched from service: [${str_error}]`;
+      throw `${obj_error.str_catchService} [${str_error}]`;
     } else {
-      return ``;
+      return obj_sign.str_empty;
     }
   }
 }
