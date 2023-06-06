@@ -82,11 +82,14 @@ const obj_store = {
     str_agentSame: `same agent already exists`,
     str_insert: `cannot insert new row into DB`,
     str_bfrToObj: `cannot convert bufffer to object`,
+    str_password: `incorrect password`,
   },
   obj_regexp: {
     reg_newlineMatch: /\r\n|\n|\r/,
     reg_keyVal: /^\s*([\w.-]+)\s*=\s*(.*)?\s*$/,
     reg_newlineMany: /\\n/g,
+    reg_passLatin: /^[a-zA-Z0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i,
+    reg_passLatinCyril: /^[a-zA-Zа-яА-Я0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i,
   }
 };
 

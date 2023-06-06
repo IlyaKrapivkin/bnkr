@@ -1,25 +1,32 @@
+const {
+  obj_error,
+  obj_sign,
+  obj_regexp,
+} = require(`../store.js`);
+
 module.exports = (
   password,
   allowCyrillic,
   allowError,
 ) => {
   try {
-    const reg_latin = /^[a-zA-Z0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i;
-    const reg_latinAndCyrillic = /^[a-zA-Zа-яА-Я0-9\-\][<>(){}!?.,:;+=~_"^*@#$%|]{6,}$/i;
-
     if (
-      reg_latin.test(password) ||
-      allowCyrillic && reg_latinAndCyrillic(password)
+      obj_regexp.reg_passLatin.test(password) ||
+      allowCyrillic && obj_regexp.reg_passLatinCyril(password)
     ) {
       return true;
     }
 
-    throw `incorrect password`;
+    throw obj_error.str_password;
   } catch (error) {
-    const str_error = error?.message || error?.toString() || ``;
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
     
     if (allowError) {
-      throw `Catched from service: [${str_error}]`;
+      throw `${obj_error.str_catchService} [${str_error}]`;
     } else {
       return false;
     }

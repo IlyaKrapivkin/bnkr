@@ -56,7 +56,11 @@ module.exports = (
 
     throw obj_error.str_bfrToObj;
   } catch (error) {
-    const str_error = error?.message || error?.toString() || obj_sign.str_empty;
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
     
     if (allowError) {
       throw `${obj_error.str_catchService} [${str_error}]`;
