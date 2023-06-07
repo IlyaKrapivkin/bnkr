@@ -68,6 +68,10 @@ const obj_store = {
   obj_measure: {
     str_msrMs: `ms`,
   },
+  obj_reqEvent: {
+    str_eventData: `data`,
+    str_eventEnd: `end`,
+  },
   obj_messageShort: {
     str_ok: `OK`,
     str_notOK: `NOT OK`,
@@ -126,6 +130,7 @@ exports.obj_icon = obj_store.obj_icon;
 exports.obj_sign = obj_store.obj_sign;
 exports.obj_extension = obj_store.obj_extension;
 exports.obj_measure = obj_store.obj_measure;
+exports.obj_reqEvent = obj_store.obj_reqEvent;
 exports.obj_messageShort = obj_store.obj_messageShort;
 exports.obj_messageLong = obj_store.obj_messageLong;
 exports.obj_error = obj_store.obj_error;

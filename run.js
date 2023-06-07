@@ -11,6 +11,7 @@ const {
   obj_headerValueHttp,
   obj_typeof,
   obj_extension,
+  obj_reqEvent,
   obj_route,
   obj_icon,
   obj_sign,
@@ -101,7 +102,36 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
     obj_sign.str_space,
     `[${incomingMessage.url}]`,
   );
+
   console.log(str_logRequestStart);
+
+  // catching request body from stream
+  let str_rawData = obj_sign.str_empty;
+  let obj_rawData = null;
+
+  incomingMessage.on(obj_reqEvent.str_eventData, (chunk) => {
+    str_rawData += chunk;
+  });
+
+  incomingMessage.on(obj_reqEvent.str_eventEnd, () => {
+    try {
+      const any_parsedData = JSON.parse(str_rawData);
+      console.log(`===`);
+      console.log(any_parsedData);
+
+      if (
+        any_parsedData &&
+        typeof any_parsedData === obj_typeof.str_typeObj
+      ) {
+        obj_rawData = any_parsedData;
+      }
+    } catch (error) {
+      console.log(error?.message || error)
+    }
+  });
+
+  console.log(`---`)
+  console.log(obj_rawData)
 
   // check of request authorization
   const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
@@ -111,6 +141,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   
   // handling request by method and route
   switch (incomingMessage.method) {
+    // GET
     case obj_methodHttp.str_methodGet:
       switch (incomingMessage.url) {
         case obj_route.str_routePing:
@@ -158,6 +189,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
       }
     break;
 
+    // POST
     case obj_methodHttp.str_methodPost:
       switch (incomingMessage.url) {
         case obj_route.str_routeRegAgent:
@@ -170,6 +202,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
             serverResponse.end(obj_messageShort.str_needNoAuth);
           } else {
             //TODO
+            console.log(`post-req /registerAgent started!`)
             const num_agentNewId = await fun_registerAgent(
               incomingMessage?.login,
               incomingMessage?.password,
@@ -206,6 +239,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
       }
     break;
 
+    // ANY OTHER
     default:
       serverResponse.setHeader(
         obj_headerNameHttp.str_headerContentType,
