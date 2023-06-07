@@ -1,4 +1,11 @@
 const { Client } = require(`pg`);
+const {
+  obj_error,
+  obj_sign,
+  obj_typeof,
+  obj_measure,
+  obj_messageLong,
+} = require(`../../store.js`);
 
 module.exports = async (
   sql,
@@ -8,17 +15,17 @@ module.exports = async (
   try {
     if (
       !sql ||
-      typeof sql !== `string`
+      typeof sql !== obj_typeof.str_typeStr
     ) {
-      throw `Incorrect input: argument sql[${sql}]`;
+      throw `${obj_error.str_inputArgument} sql[${sql}]`;
     }
 
     if (
       !parameters ||
-      typeof parameters !== `object` ||
+      typeof parameters !== obj_typeof.str_typeObj ||
       isNaN(parameters.length)
     ) {
-      throw `Incorrect input: argument parameters[${parameters}]`;
+      throw `${obj_error.str_inputArgument} parameters[${parameters}]`;
     }
 
     const obj_clientPg = new Client(
@@ -39,7 +46,7 @@ module.exports = async (
 
     const num_duration = Date.now() - num_start;
     if (num_duration > 10) {
-      console.warn(`query duration: [${num_duration}]`);
+      console.warn(`${obj_messageLong.str_queryDuration} [${num_duration}]${obj_measure.str_msrMs}`);
     }
 
     await obj_clientPg.end();
@@ -48,18 +55,22 @@ module.exports = async (
 
     if (
       !arr_resRows ||
-      typeof arr_resRows !== `object` ||
+      typeof arr_resRows !== obj_typeof.str_typeObj ||
       isNaN(arr_resRows.length)
     ) {
-      throw `Incorrect database answer`;
+      throw obj_error.str_dbAnswer;
     } else {
       return arr_resRows;
     }
   } catch (error) {
-    const str_error = error?.message || error?.toString() || ``;
-
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
+    
     if (allowError) {
-      throw `Catched from database: [${str_error}]`;
+      throw `${obj_error.str_catchJob} [${str_error}]`;
     } else {
       return [];
     }

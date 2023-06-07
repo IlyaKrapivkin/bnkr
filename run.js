@@ -9,6 +9,8 @@ const {
   obj_statusHttp,
   obj_headerNameHttp,
   obj_headerValueHttp,
+  obj_typeof,
+  obj_extension,
   obj_route,
   obj_icon,
   obj_sign,
@@ -27,7 +29,7 @@ const fun_bfrToObj = require(`./service/bfrToObj.js`);
 
 const fun_startListener = async () => {
   // message about starting server
-  const str_messageStartExtended = ``.concat(
+  const str_messageStartExtended = obj_sign.str_empty.concat(
     obj_icon.str_iconServer,
     obj_sign.str_space,
     obj_messageLong.str_servStart,
@@ -37,10 +39,10 @@ const fun_startListener = async () => {
   console.log(str_messageStartExtended);
 
   // adding hide parameters to global config
-  const str_pathEnvFile = ``.concat(
+  const str_pathEnvFile = obj_sign.str_empty.concat(
     __dirname,
     obj_sign.str_slash,
-    `.env`,
+    `${obj_sign.str_dot}${obj_extension.str_extEnv}`,
   );
   const bfr_envCustom = fs.readFileSync(str_pathEnvFile);
   const obj_envCustom = fun_bfrToObj(bfr_envCustom, false);
@@ -61,11 +63,11 @@ const fun_startListener = async () => {
   const str_versionDb = arr_resDb[0]?.version;
   if (
     str_versionDb &&
-    typeof str_versionDb === `string` &&
+    typeof str_versionDb === obj_typeof.str_typeStr &&
     str_versionDb.length
   ) {
-    const str_versionDbShort = `${str_versionDb.slice(0, 16)}...`;
-    const str_messageDbConnectedExtended = ``.concat(
+    const str_versionDbShort = `${str_versionDb.slice(0, 16)}${obj_sign.str_mdot}`;
+    const str_messageDbConnectedExtended = obj_sign.str_empty.concat(
       obj_icon.str_iconDb,
       obj_sign.str_space,
       obj_messageLong.str_dbConnect,
@@ -78,7 +80,7 @@ const fun_startListener = async () => {
     );
     console.log(str_messageDbConnectedExtended);
   } else {
-    const str_errorLocal = ``.concat(
+    const str_errorLocal = obj_sign.str_empty.concat(
       obj_icon.str_iconError,
       obj_sign.str_space,
       obj_messageLong.str_dbNoConnect,
@@ -92,7 +94,7 @@ const fun_startListener = async () => {
 
 const server = http.createServer(async (incomingMessage, serverResponse) => {
   // message about catching request
-  const str_logRequestStart = ``.concat(
+  const str_logRequestStart = obj_sign.str_empty.concat(
     obj_icon.str_iconRequest,
     obj_sign.str_space,
     `[${incomingMessage.method}]`,
@@ -102,7 +104,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   console.log(str_logRequestStart);
 
   // check of request authorization
-  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();//TODO: place Req argument to job
+  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
   const any_sessionInitial = incomingMessage.headers[str_headerNameAuth];
   const obj_agent = await fun_auth(any_sessionInitial, false);
   const bol_authorized = !!(obj_agent && obj_agent.id);
@@ -127,7 +129,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
               obj_headerValueHttp.str_headerValueText,
             );
             serverResponse.statusCode = obj_statusHttp.num_statusOk;
-            const str_infoApp = ``.concat(
+            const str_infoApp = obj_sign.str_empty.concat(
               config.name,
               obj_sign.str_space,
               config.version,
@@ -168,7 +170,6 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
             serverResponse.end(obj_messageShort.str_needNoAuth);
           } else {
             //TODO
-            console.log(incomingMessage);
             const num_agentNewId = await fun_registerAgent(
               incomingMessage?.login,
               incomingMessage?.password,

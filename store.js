@@ -56,8 +56,17 @@ const obj_store = {
     str_bslash: `\\`,
     str_slash: `/`,
     str_empty: ``,
+    str_dot: `.`,
+    str_mdot: `...`,
     str_squot: `'`,
     str_dquot: `"`,
+  },
+  obj_extension: {
+    str_extEnv: `env`,
+    str_extTxt: `txt`,
+  },
+  obj_measure: {
+    str_msrMs: `ms`,
   },
   obj_messageShort: {
     str_ok: `OK`,
@@ -72,15 +81,20 @@ const obj_store = {
     str_servStart: `server started`,
     str_dbConnect: `database connected`,
     str_dbNoConnect: `cannot connect to database`,
+    str_queryDuration: `query duration`,
   },
   obj_error: {
     str_agentSame: `same agent already exists`,
     str_catchService: `catched from service`,
+    str_catchJob: `catched from job`,
+    str_catchDb: `catched from database`,
+    str_inputArgument: `incorrect argument in input`,
     str_inputAlias: `incorrect alias in input`,
     str_inputLogin: `incorrect login in input`,
     str_inputPassword: `incorrect password in input`,
     str_password: `incorrect password`,
     str_session: `incorrect session code`,
+    str_dbAnswer: `incorrect database answer`,
     str_insert: `cannot insert new row into DB`,
     str_bfrToObj: `cannot convert bufffer to object`,
     str_strToEmail: `cannot convert string to email`,
@@ -110,6 +124,8 @@ exports.obj_encoding = obj_store.obj_encoding;
 exports.obj_typeof = obj_store.obj_typeof;
 exports.obj_icon = obj_store.obj_icon;
 exports.obj_sign = obj_store.obj_sign;
+exports.obj_extension = obj_store.obj_extension;
+exports.obj_measure = obj_store.obj_measure;
 exports.obj_messageShort = obj_store.obj_messageShort;
 exports.obj_messageLong = obj_store.obj_messageLong;
 exports.obj_error = obj_store.obj_error;

@@ -1,7 +1,11 @@
-const { obj_error } = require(`../store.js`);
+const {
+  obj_error,
+  obj_sign,
+  obj_typeof,
+} = require(`../store.js`);
 const fun_strToEmail = require(`../service/strToEmail.js`);
 const fun_strToPhone = require(`../service/strToPhone.js`);
-const fun_strToSbfr = require(`../service/strToSbfr.js`);
+const fun_strToPbfr = require(`../service/strToPbfr.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
 const fun_query = require(`../external/database/database.js`);
 const str_sqlAgentByLogin = require(`../external/database/request/agentByLogin.js`);
@@ -15,9 +19,9 @@ module.exports = async (
 ) => {
   try {
     const str_aliasChecked = (
-      (alias && typeof alias === `string`) ?
+      (alias && typeof alias === obj_typeof.str_typeStr) ?
       alias.trim().toLowerCase() :
-      ``
+      obj_sign.str_empty
     )
     if (!str_aliasChecked) {
       throw obj_error.alias;
@@ -26,11 +30,11 @@ module.exports = async (
     const str_loginInitial = (
       (
         login &&
-        typeof login === `string` &&
+        typeof login === obj_typeof.str_typeStr &&
         login.length
       ) ?
       login.toLowerCase().trim() :
-      ``
+      obj_sign.str_empty
     );
 
     const str_emailByLogin = fun_strToEmail(str_loginInitial, false);
@@ -50,7 +54,7 @@ module.exports = async (
       throw obj_error.str_inputPassword;
     }
 
-    const str_passCrypted = fun_strToSbfr(password);
+    const str_passCrypted = fun_strToPbfr(password);
 
 
     const arr_resDbAgentSame = await fun_query(
@@ -85,9 +89,14 @@ module.exports = async (
 
     throw `ANY`;//TODO
   } catch (error) {
-    const str_error = error?.message || error?.toString() || ``;
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
+    
     if (allowError) {
-      throw `Catched from job: [${str_error}]`;
+      throw `${obj_error.str_catchJob} [${str_error}]`;
     } else {
       return 0;
     }

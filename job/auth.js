@@ -1,4 +1,8 @@
-const { obj_error } = require(`../store.js`);
+const {
+  obj_error,
+  obj_sign,
+  obj_typeof,
+} = require(`../store.js`);
 const fun_query = require(`../external/database/database.js`);
 const str_sqlAgentBySession = require(`../external/database/request/agentBySession.js`);
 
@@ -10,11 +14,11 @@ module.exports = async (
     const str_session = (
       (
         session &&
-        typeof session === `string` &&
+        typeof session === obj_typeof.str_typeStr &&
         session.length
       ) ?
       session.toLowerCase().trim() :
-      ``
+      obj_sign.str_empty
     );
 
     if (str_session) {
@@ -43,9 +47,14 @@ module.exports = async (
     
     throw obj_error.str_session;
   } catch (error) {
-    const str_error = error?.message || error?.toString() || ``;
+    const str_error = (
+      error?.message ||
+      error?.toString() ||
+      obj_sign.str_empty
+    );
+    
     if (allowError) {
-      throw `Catched from job: [${str_error}]`;
+      throw `${obj_error.str_catchJob} [${str_error}]`;
     } else {
       return {};
     }
