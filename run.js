@@ -15,6 +15,7 @@ const {
   obj_route,
   obj_icon,
   obj_sign,
+  obj_error,
   obj_messageShort,
   obj_messageLong,
 } = require(`./store.js`);
@@ -107,148 +108,154 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
 
   // catching request body from stream
   let str_rawData = obj_sign.str_empty;
-  let obj_rawData = null;
+  let obj_reqBody = null;
 
   incomingMessage.on(obj_reqEvent.str_eventData, (chunk) => {
+    console.log(`^^^`)
     str_rawData += chunk;
   });
 
-  incomingMessage.on(obj_reqEvent.str_eventEnd, () => {
+  incomingMessage.on(obj_reqEvent.str_eventEnd, async () => {
+    // parsing request body to json
     try {
       const any_parsedData = JSON.parse(str_rawData);
-      console.log(`===`);
-      console.log(any_parsedData);
 
       if (
         any_parsedData &&
         typeof any_parsedData === obj_typeof.str_typeObj
       ) {
-        obj_rawData = any_parsedData;
+        obj_reqBody = any_parsedData;
       }
     } catch (error) {
-      console.log(error?.message || error)
+      const str_error = (
+        error?.message ||
+        error?.toString() ||
+        obj_sign.str_empty
+      );
+
+      console.log(`${obj_error.str_reqbody} [${str_error}]`);
     }
-  });
-
-  console.log(`---`)
-  console.log(obj_rawData)
-
-  // check of request authorization
-  const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
-  const any_sessionInitial = incomingMessage.headers[str_headerNameAuth];
-  const obj_agent = await fun_auth(any_sessionInitial, false);
-  const bol_authorized = !!(obj_agent && obj_agent.id);
+    
+    console.log(obj_reqBody);
   
-  // handling request by method and route
-  switch (incomingMessage.method) {
-    // GET
-    case obj_methodHttp.str_methodGet:
-      switch (incomingMessage.url) {
-        case obj_route.str_routePing:
-          serverResponse.setHeadincomingMessageer(
-            obj_headerNameHttp.str_headerContentType,
-            obj_headerValueHttp.str_headerValueText,
-          );
-          serverResponse.statusCode = obj_statusHttp.num_statusOk;
-          serverResponse.end(obj_messageShort.str_pong);
-        break;
-
-        case obj_route.str_routeInfoApp:
-          if (bol_authorized) {
-            serverResponse.setHeader(
+    // check of request authorization
+    const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();
+    const any_sessionInitial = incomingMessage.headers[str_headerNameAuth];
+    const obj_agent = await fun_auth(any_sessionInitial, false);
+    const bol_authorized = !!(obj_agent && obj_agent.id);
+    
+    // handling request by method and route
+    switch (incomingMessage.method) {
+      // GET
+      case obj_methodHttp.str_methodGet:
+        switch (incomingMessage.url) {
+          case obj_route.str_routePing:
+            serverResponse.setHeadincomingMessageer(
               obj_headerNameHttp.str_headerContentType,
               obj_headerValueHttp.str_headerValueText,
             );
             serverResponse.statusCode = obj_statusHttp.num_statusOk;
-            const str_infoApp = obj_sign.str_empty.concat(
-              config.name,
-              obj_sign.str_space,
-              config.version,
-              obj_sign.str_space,
-              config.description,
-            );
-            serverResponse.end(str_infoApp);
-          } else {
-            serverResponse.setHeader(
-              obj_headerNameHttp.str_headerContentType,
-              obj_headerValueHttp.str_headerValueText,
-            );
-            serverResponse.statusCode = obj_statusHttp.num_statusUnauthorized;
-            serverResponse.end(obj_messageShort.str_unauthorized);
-          }
-        break;
-      
-        default:
-          serverResponse.setHeader(
-            obj_headerNameHttp.str_headerContentType,
-            obj_headerValueHttp.str_headerValueText,
-          );
-          serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
-          serverResponse.end(obj_messageShort.str_notFound);
-        break;
-      }
-    break;
-
-    // POST
-    case obj_methodHttp.str_methodPost:
-      switch (incomingMessage.url) {
-        case obj_route.str_routeRegAgent:
-          if (bol_authorized) {
-            serverResponse.setHeader(
-              obj_headerNameHttp.str_headerContentType,
-              obj_headerValueHttp.str_headerValueText,
-            );
-            serverResponse.statusCode = obj_statusHttp.num_statusWrongAuthorized;
-            serverResponse.end(obj_messageShort.str_needNoAuth);
-          } else {
-            //TODO
-            console.log(`post-req /registerAgent started!`)
-            const num_agentNewId = await fun_registerAgent(
-              incomingMessage?.login,
-              incomingMessage?.password,
-              incomingMessage?.alias,
-              false,
-            );
-
-            if (num_agentNewId) {
+            serverResponse.end(obj_messageShort.str_pong);
+          break;
+  
+          case obj_route.str_routeInfoApp:
+            if (bol_authorized) {
               serverResponse.setHeader(
                 obj_headerNameHttp.str_headerContentType,
                 obj_headerValueHttp.str_headerValueText,
               );
               serverResponse.statusCode = obj_statusHttp.num_statusOk;
-              serverResponse.end(obj_messageShort.str_ok);
+              const str_infoApp = obj_sign.str_empty.concat(
+                config.name,
+                obj_sign.str_space,
+                config.version,
+                obj_sign.str_space,
+                config.description,
+              );
+              serverResponse.end(str_infoApp);
             } else {
               serverResponse.setHeader(
                 obj_headerNameHttp.str_headerContentType,
                 obj_headerValueHttp.str_headerValueText,
               );
-              serverResponse.statusCode = obj_statusHttp.num_serverError;
-              serverResponse.end(obj_messageShort.str_notOK);
+              serverResponse.statusCode = obj_statusHttp.num_statusUnauthorized;
+              serverResponse.end(obj_messageShort.str_unauthorized);
             }
-          }
-        break;
+          break;
+        
+          default:
+            serverResponse.setHeader(
+              obj_headerNameHttp.str_headerContentType,
+              obj_headerValueHttp.str_headerValueText,
+            );
+            serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
+            serverResponse.end(obj_messageShort.str_notFound);
+          break;
+        }
+      break;
+  
+      // POST
+      case obj_methodHttp.str_methodPost:
+        switch (incomingMessage.url) {
+          case obj_route.str_routeRegAgent:
+            if (bol_authorized) {
+              serverResponse.setHeader(
+                obj_headerNameHttp.str_headerContentType,
+                obj_headerValueHttp.str_headerValueText,
+              );
+              serverResponse.statusCode = obj_statusHttp.num_statusWrongAuthorized;
+              serverResponse.end(obj_messageShort.str_needNoAuth);
+            } else {
+              //TODO
+              console.log(`post-req /registerAgent started!`)
+              const num_agentNewId = await fun_registerAgent(
+                incomingMessage?.login,
+                incomingMessage?.password,
+                incomingMessage?.alias,
+                false,
+              );
+  
+              if (num_agentNewId) {
+                serverResponse.setHeader(
+                  obj_headerNameHttp.str_headerContentType,
+                  obj_headerValueHttp.str_headerValueText,
+                );
+                serverResponse.statusCode = obj_statusHttp.num_statusOk;
+                serverResponse.end(obj_messageShort.str_ok);
+              } else {
+                serverResponse.setHeader(
+                  obj_headerNameHttp.str_headerContentType,
+                  obj_headerValueHttp.str_headerValueText,
+                );
+                serverResponse.statusCode = obj_statusHttp.num_serverError;
+                serverResponse.end(obj_messageShort.str_notOK);
+              }
+            }
+          break;
+  
+          default:
+            serverResponse.setHeader(
+              obj_headerNameHttp.str_headerContentType,
+              obj_headerValueHttp.str_headerValueText,
+            );
+            serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
+            serverResponse.end(obj_messageShort.str_notFound);
+          break;
+        }
+      break;
+  
+      // ANY OTHER
+      default:
+        serverResponse.setHeader(
+          obj_headerNameHttp.str_headerContentType,
+          obj_headerValueHttp.str_headerValueText
+        );
+        serverResponse.statusCode = obj_statusHttp.num_statusMethodNotAllowed;
+        serverResponse.end(obj_messageShort.str_methodNotAllowed);
+      break;
+    }
+  });
 
-        default:
-          serverResponse.setHeader(
-            obj_headerNameHttp.str_headerContentType,
-            obj_headerValueHttp.str_headerValueText,
-          );
-          serverResponse.statusCode = obj_statusHttp.num_statusNotFound;
-          serverResponse.end(obj_messageShort.str_notFound);
-        break;
-      }
-    break;
-
-    // ANY OTHER
-    default:
-      serverResponse.setHeader(
-        obj_headerNameHttp.str_headerContentType,
-        obj_headerValueHttp.str_headerValueText
-      );
-      serverResponse.statusCode = obj_statusHttp.num_statusMethodNotAllowed;
-      serverResponse.end(obj_messageShort.str_methodNotAllowed);
-    break;
-  }
 });
 
 server.listen(

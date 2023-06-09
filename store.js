@@ -99,6 +99,7 @@ const obj_store = {
     str_password: `incorrect password`,
     str_session: `incorrect session code`,
     str_dbAnswer: `incorrect database answer`,
+    str_reqbody: `cannot parse request body`,
     str_insert: `cannot insert new row into DB`,
     str_bfrToObj: `cannot convert bufffer to object`,
     str_strToEmail: `cannot convert string to email`,
