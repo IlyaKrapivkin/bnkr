@@ -207,6 +207,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
             } else {
               //TODO
               const num_agentNewId = await fun_registerAgent(
+                obj_reqBody?.secret,
                 obj_reqBody?.code,
                 obj_reqBody?.login,
                 obj_reqBody?.password,

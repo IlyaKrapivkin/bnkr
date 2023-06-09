@@ -14,6 +14,7 @@ const fun_rndmDigits = require(`../service/rndmDigits.js`);
 const fun_strToPbfr = require(`../service/strToPbfr.js`);
 
 module.exports = async (
+  secret,
   code,
   login,
   password,
@@ -21,6 +22,14 @@ module.exports = async (
   allowError,
 ) => {
   try {
+    if (
+      !secret ||
+      typeof secret !== obj_typeof.str_typeStr ||
+      secret !== process.env.REGAGENTSECRET
+    ) {
+      throw obj_error.str_notAllowedBySecret;
+    }
+
     const str_aliasChecked = (
       (alias && typeof alias === obj_typeof.str_typeStr) ?
       alias.trim().toLowerCase() :
@@ -53,7 +62,6 @@ module.exports = async (
 
     const str_loginChecked = (str_emailByLogin || str_phoneByLogin);
 
-
     if (!fun_isPassword(password)) {
       throw obj_error.str_inputPassword;
     }
@@ -76,6 +84,9 @@ module.exports = async (
     if (code) {
       throw `NOT DONE`
     } else {
+      if (str_aliasChecked) {
+        throw `eee`
+      }
       const arr_resDbAgentNew = await fun_query(
         str_sqlInsertAgent,
         [
@@ -107,9 +118,12 @@ module.exports = async (
       error?.toString() ||
       obj_sign.str_empty
     );
+
+    const str_errorDetailed = `${ obj_error.str_catchJob } [${ str_error }]`;
+    console.log(str_errorDetailed);
     
     if (allowError) {
-      throw `${ obj_error.str_catchJob } [${ str_error }]`;
+      throw str_errorDetailed;
     } else {
       return obj_sign.num_zero;
     }

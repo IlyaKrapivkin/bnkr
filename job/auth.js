@@ -52,9 +52,12 @@ module.exports = async (
       error?.toString() ||
       obj_sign.str_empty
     );
+
+    const str_errorDetailed = `${ obj_error.str_catchJob } [${ str_error }]`;
+    console.log(str_errorDetailed);
     
     if (allowError) {
-      throw `${ obj_error.str_catchJob } [${ str_error }]`;
+      throw str_errorDetailed;
     } else {
       return {};
     }

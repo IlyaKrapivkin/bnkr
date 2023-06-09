@@ -2,6 +2,7 @@ const {
   obj_error,
   obj_sign,
   obj_regexp,
+  obj_typeof,
 } = require(`../store.js`);
 
 module.exports = (
@@ -11,8 +12,12 @@ module.exports = (
 ) => {
   try {
     if (
-      obj_regexp.reg_passLatin.test(password) ||
-      allowCyrillic && obj_regexp.reg_passLatinCyril(password)
+      password &&
+      typeof password === obj_typeof.str_typeStr &&
+      (
+        obj_regexp.reg_passLatin.test(password) ||
+        allowCyrillic && obj_regexp.reg_passLatinCyril(password)
+      )
     ) {
       return true;
     }

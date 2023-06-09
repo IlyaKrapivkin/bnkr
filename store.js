@@ -109,6 +109,7 @@ const obj_store = {
     str_strToPhoneMobRus: `cannot convert string to phoneMobRus`,
     str_strToPbfr: `cannot convert string to prebuffer`,
     str_intPositive: `number must be positive integer`,
+    str_notAllowedBySecret: `operation not allowed`,
   },
   obj_regexp: {
     reg_newlineMatch: /\r\n|\n|\r/,

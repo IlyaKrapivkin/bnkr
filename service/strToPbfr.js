@@ -12,12 +12,7 @@ module.exports = (
   try {
 
     if (typeof str === obj_typeof.str_typeStr) {
-      const str_pbfr = Buffer.from(str).toString(obj_encoding.str_utf);
-
-      console.log(`===`)
-      console.log(str_pbfr)
-      
-      return str_pbfr;
+      return Buffer.from(str).toString(obj_encoding.str_pbfr);
     }
 
     throw obj_error.str_strToPbfr;
