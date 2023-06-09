@@ -111,7 +111,6 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   let obj_reqBody = null;
 
   incomingMessage.on(obj_reqEvent.str_eventData, (chunk) => {
-    console.log(`^^^`)
     str_rawData += chunk;
   });
 
@@ -207,11 +206,11 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
               serverResponse.end(obj_messageShort.str_needNoAuth);
             } else {
               //TODO
-              console.log(`post-req /registerAgent started!`)
               const num_agentNewId = await fun_registerAgent(
-                incomingMessage?.login,
-                incomingMessage?.password,
-                incomingMessage?.alias,
+                obj_reqBody?.code,
+                obj_reqBody?.login,
+                obj_reqBody?.password,
+                obj_reqBody?.alias,
                 false,
               );
   

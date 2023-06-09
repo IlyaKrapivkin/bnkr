@@ -60,6 +60,7 @@ const obj_store = {
     str_mdot: `...`,
     str_squot: `'`,
     str_dquot: `"`,
+    num_zero: 0,
   },
   obj_extension: {
     str_extEnv: `env`,
@@ -94,6 +95,7 @@ const obj_store = {
     str_catchDb: `catched from database`,
     str_inputArgument: `incorrect argument in input`,
     str_inputAlias: `incorrect alias in input`,
+    str_inputNoLogin: `no login in input`,
     str_inputLogin: `incorrect login in input`,
     str_inputPassword: `incorrect password in input`,
     str_password: `incorrect password`,
@@ -105,6 +107,7 @@ const obj_store = {
     str_strToEmail: `cannot convert string to email`,
     str_strToPhoneMobRus: `cannot convert string to phoneMobRus`,
     str_strToPbfr: `cannot convert string to prebuffer`,
+    str_intPositive: `number must be positive integer`,
   },
   obj_regexp: {
     reg_newlineMatch: /\r\n|\n|\r/,
