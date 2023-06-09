@@ -87,6 +87,7 @@ const obj_store = {
     str_dbConnect: `database connected`,
     str_dbNoConnect: `cannot connect to database`,
     str_queryDuration: `query duration`,
+    str_randomCode: `random code generated`,
   },
   obj_error: {
     str_agentSame: `same agent already exists`,

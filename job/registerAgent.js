@@ -2,6 +2,7 @@ const {
   obj_error,
   obj_sign,
   obj_typeof,
+  obj_messageLong,
 } = require(`../store.js`);
 const str_sqlAgentByLogin = require(`../external/database/request/agentByLogin.js`);
 const str_sqlInsertAgent = require(`../external/database/request/insertAgent.js`);
@@ -71,6 +72,7 @@ module.exports = async (
       throw obj_error.str_agentSame;
     }
 
+    // check code received by agent
     if (code) {
       throw `NOT DONE`
     } else {
@@ -94,8 +96,8 @@ module.exports = async (
       }
   
       //code sending
-      const str_codeAuth = fun_rndmDigits(6, false);
-      console.log(str_codeAuth);
+      const num_codeAuth = fun_rndmDigits(6, false);
+      console.log(`${ obj_messageLong.str_randomCode } [${ num_codeAuth }]`);
     }
 
     throw `ANY`;//TODO
@@ -107,7 +109,7 @@ module.exports = async (
     );
     
     if (allowError) {
-      throw `${obj_error.str_catchJob} [${str_error}]`;
+      throw `${ obj_error.str_catchJob } [${ str_error }]`;
     } else {
       return obj_sign.num_zero;
     }

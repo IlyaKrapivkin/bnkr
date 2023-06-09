@@ -17,7 +17,7 @@ module.exports = async (
       !sql ||
       typeof sql !== obj_typeof.str_typeStr
     ) {
-      throw `${obj_error.str_inputArgument} sql[${sql}]`;
+      throw `${ obj_error.str_inputArgument } sql[${ sql }]`;
     }
 
     if (
@@ -25,7 +25,7 @@ module.exports = async (
       typeof parameters !== obj_typeof.str_typeObj ||
       isNaN(parameters.length)
     ) {
-      throw `${obj_error.str_inputArgument} parameters[${parameters}]`;
+      throw `${ obj_error.str_inputArgument } parameters[${ parameters }]`;
     }
 
     const obj_clientPg = new Client(
@@ -46,7 +46,7 @@ module.exports = async (
 
     const num_duration = Date.now() - num_start;
     if (num_duration > 10) {
-      console.warn(`${obj_messageLong.str_queryDuration} [${num_duration}]${obj_measure.str_msrMs}`);
+      console.warn(`${ obj_messageLong.str_queryDuration } [${ num_duration }]${ obj_measure.str_msrMs }`);
     }
 
     await obj_clientPg.end();
@@ -70,7 +70,7 @@ module.exports = async (
     );
     
     if (allowError) {
-      throw `${obj_error.str_catchJob} [${str_error}]`;
+      throw `${ obj_error.str_catchJob } [${ str_error }]`;
     } else {
       return [];
     }

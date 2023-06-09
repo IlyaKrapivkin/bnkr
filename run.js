@@ -36,7 +36,7 @@ const fun_startListener = async () => {
     obj_sign.str_space,
     obj_messageLong.str_servStart,
     obj_sign.str_space,
-    `[${obj_host.str_hostServer}:${obj_port.num_portServer}]`,
+    `[${ obj_host.str_hostServer }:${ obj_port.num_portServer }]`,
   );
   console.log(str_messageStartExtended);
 
@@ -44,7 +44,7 @@ const fun_startListener = async () => {
   const str_pathEnvFile = obj_sign.str_empty.concat(
     __dirname,
     obj_sign.str_slash,
-    `${obj_sign.str_dot}${obj_extension.str_extEnv}`,
+    `${ obj_sign.str_dot }${ obj_extension.str_extEnv }`,
   );
   const bfr_envCustom = fs.readFileSync(str_pathEnvFile);
   const obj_envCustom = fun_bfrToObj(bfr_envCustom, false);
@@ -68,17 +68,17 @@ const fun_startListener = async () => {
     typeof str_versionDb === obj_typeof.str_typeStr &&
     str_versionDb.length
   ) {
-    const str_versionDbShort = `${str_versionDb.slice(0, 16)}${obj_sign.str_mdot}`;
+    const str_versionDbShort = `${ str_versionDb.slice(0, 16) }${ obj_sign.str_mdot }`;
     const str_messageDbConnectedExtended = obj_sign.str_empty.concat(
       obj_icon.str_iconDb,
       obj_sign.str_space,
       obj_messageLong.str_dbConnect,
       obj_sign.str_space,
-      `[${process.env.PGDATABASE}]`,
+      `[${ process.env.PGDATABASE }]`,
       obj_sign.str_space,
-      `[${process.env.PGHOST}:${process.env.PGPORT}]`,
+      `[${ process.env.PGHOST }:${ process.env.PGPORT }]`,
       obj_sign.str_space,
-      `[${str_versionDbShort}]`,
+      `[${ str_versionDbShort }]`,
     );
     console.log(str_messageDbConnectedExtended);
   } else {
@@ -99,9 +99,9 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   const str_logRequestStart = obj_sign.str_empty.concat(
     obj_icon.str_iconRequest,
     obj_sign.str_space,
-    `[${incomingMessage.method}]`,
+    `[${ incomingMessage.method }]`,
     obj_sign.str_space,
-    `[${incomingMessage.url}]`,
+    `[${ incomingMessage.url }]`,
   );
 
   console.log(str_logRequestStart);
@@ -132,7 +132,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
         obj_sign.str_empty
       );
 
-      console.log(`${obj_error.str_reqbody} [${str_error}]`);
+      console.log(`${ obj_error.str_reqbody } [${ str_error }]`);
     }
     
     console.log(obj_reqBody);

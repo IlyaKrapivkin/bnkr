@@ -54,7 +54,7 @@ module.exports = async (
     );
     
     if (allowError) {
-      throw `${obj_error.str_catchJob} [${str_error}]`;
+      throw `${ obj_error.str_catchJob } [${ str_error }]`;
     } else {
       return {};
     }

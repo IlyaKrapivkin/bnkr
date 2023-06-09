@@ -29,7 +29,7 @@ module.exports = (
     );
     
     if (allowError) {
-      throw `${obj_error.str_catchService} [${str_error}]`;
+      throw `${ obj_error.str_catchService } [${ str_error }]`;
     } else {
       return obj_sign.str_empty;
     }
