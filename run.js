@@ -20,7 +20,7 @@ const {
   obj_messageLong,
 } = require(`./store.js`);
 
-const str_sqlVersion = require(`./external/database/request/version.js`);
+const str_sqlVersion = require(`./external/database/sql/version.js`);
 
 const fun_query = require(`./external/database/database.js`);
 
@@ -60,6 +60,7 @@ const fun_startListener = async () => {
   // connection to database
   const arr_resDb = await fun_query(
     str_sqlVersion,
+    false,
     [],
   );
   const str_versionDb = arr_resDb[0]?.version;

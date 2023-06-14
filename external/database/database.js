@@ -9,8 +9,8 @@ const {
 
 module.exports = async (
   sql,
-  parameters,
   allowError,
+  parameters,
 ) => {
   try {
     if (
@@ -70,7 +70,7 @@ module.exports = async (
     );
     
     if (allowError) {
-      throw `${ obj_error.str_catchJob } [${ str_error }]`;
+      throw `${ obj_error.str_catchExternal } [${ str_error }]`;
     } else {
       return [];
     }

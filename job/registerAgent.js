@@ -3,9 +3,14 @@ const {
   obj_sign,
   obj_typeof,
   obj_messageLong,
+  obj_messageShort,
 } = require(`../store.js`);
-const str_sqlAgentByLogin = require(`../external/database/request/agentByLogin.js`);
-const str_sqlInsertAgent = require(`../external/database/request/insertAgent.js`);
+const str_sqlAgentByLogin = require(`../external/database/sql/agentByLogin.js`);
+const str_sqlInsertAgent = require(`../external/database/sql/insertAgent.js`);
+const str_sqlInsertAuth = require(`../external/database/sql/insertAuth.js`);
+const str_sqlAuthByLogin = require(`../external/database/sql/authByLogin.js`);
+const str_sqlUpdateAuth = require(`../external/database/sql/updateAuth.js`);
+const str_sqlUpdateAgentAlive = require(`../external/database/sql/updateAgentAlive.js`);
 const fun_query = require(`../external/database/database.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
 const fun_strToEmail = require(`../service/strToEmail.js`);
@@ -70,25 +75,71 @@ module.exports = async (
 
     const arr_resDbAgentSame = await fun_query(
       str_sqlAgentByLogin,
-      [str_loginChecked],
       false,
+      [str_loginChecked],
     );
 
-    const any_agentSame = arr_resDbAgentSame[0];
+    const num_agentSameId = arr_resDbAgentSame[0]?.id;
 
-    if (any_agentSame && any_agentSame.id) {
-      throw obj_error.str_agentSame;
-    }
-
-    // check code received by agent
+    // check code from request body
     if (code) {
-      throw `NOT DONE`
-    } else {
-      if (str_aliasChecked) {
-        throw `eee`
+      const arr_resDbAuthOld = await fun_query(
+        str_sqlAuthByLogin,
+        true,
+        [
+          str_loginChecked,
+        ],
+      );
+      const str_authCodeOld = arr_resDbAuthOld[0].code;
+      const num_authIdOld = arr_resDbAuthOld[0].id;
+
+      if (str_authCodeOld && str_authCodeOld === code.trim()) {
+        await fun_query(
+          str_sqlUpdateAuth,
+          true,
+          [
+            num_authIdOld,
+            false,
+          ]
+        );
+
+        if (num_agentSameId) {
+          await fun_query(
+            str_sqlUpdateAgentAlive,
+            true,
+            [
+              num_agentSameId,
+            ]
+          );
+
+          return {
+            message: `${obj_messageShort.str_agentRegistered} ${str_loginChecked}`,
+            error: ``,
+          };
+        } else {
+          throw obj_error.str_agentNotFound;
+        }
+      } else {
+        await fun_query(
+          str_sqlUpdateAuth,
+          true,
+          [
+            num_authIdOld,
+            true,
+          ]
+        );
+
+        throw obj_error.str_code;
+
       }
+    } else {
+      if (num_agentSameId) {
+        throw obj_error.str_agentSame;
+      }
+
       const arr_resDbAgentNew = await fun_query(
         str_sqlInsertAgent,
+        true,
         [
           false,
           str_aliasChecked,
@@ -97,21 +148,29 @@ module.exports = async (
           str_emailByLogin || null,
           str_phoneByLogin || null,
         ],
-        true,
       );
-  
       const num_agentId = arr_resDbAgentNew[0].id;
-  
       if (!num_agentId) {
         throw obj_error.str_insert;
       }
   
-      //code sending
+      // code sending
       const num_codeAuth = fun_rndmDigits(6, false);
       console.log(`${ obj_messageLong.str_randomCode } [${ num_codeAuth }]`);
-    }
+      await fun_query(
+        str_sqlInsertAuth,
+        true,
+        [
+          str_loginChecked,
+          num_codeAuth,
+        ],
+      );
 
-    throw `ANY`;//TODO
+      return {
+        message: `${obj_messageShort.str_codeSentTo} ${str_loginChecked}`,
+        error: ``,
+      };
+    }
   } catch (error) {
     const str_error = (
       error?.message ||
@@ -125,7 +184,10 @@ module.exports = async (
     if (allowError) {
       throw str_errorDetailed;
     } else {
-      return obj_sign.num_zero;
+      return {
+        message: ``,
+        error: str_errorDetailed,
+      }
     }
   }
 }

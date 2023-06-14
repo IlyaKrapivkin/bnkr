@@ -4,7 +4,7 @@ const {
   obj_typeof,
 } = require(`../store.js`);
 const fun_query = require(`../external/database/database.js`);
-const str_sqlAgentBySession = require(`../external/database/request/agentBySession.js`);
+const str_sqlAgentBySession = require(`../external/database/sql/agentBySession.js`);
 
 module.exports = async (
   session,
@@ -24,8 +24,8 @@ module.exports = async (
     if (str_session) {
       const arr_resDb = await fun_query(
         str_sqlAgentBySession,
-        [str_session],
         false,
+        [str_session],
       );
 
       const any_agent = arr_resDb[0];

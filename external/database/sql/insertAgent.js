@@ -1,5 +1,5 @@
 module.exports = `
-SELECT INTO agent
+INSERT INTO agent
 (
   alive,
   login,
@@ -17,7 +17,7 @@ VALUES
   $5,
   $6
 )
-RETURNING id
+RETURNING id;
 
 --$1::VARCHAR
 --$2::VARCHAR
