@@ -47,23 +47,23 @@ CREATE INDEX IF NOT EXISTS ind_historyagent_alive ON history_agent USING BTREE (
 
 
 
-CREATE TABLE IF NOT EXISTS session (
+CREATE TABLE IF NOT EXISTS auth (
   id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
   alive BOOLEAN NOT NULL DEFAULT TRUE,
   agent_id BIGINT NOT NULL,
   code VARCHAR (256) NOT NULL,
-  CONSTRAINT pkey_session_id PRIMARY KEY,
-  CONSTRAINT fkey_session_agentid FOREIGN KEY (agent_id) REFERENCES agent (id),
-  CONSTRAINT ukey_session_code UNIQUE (code)
+  CONSTRAINT pkey_auth_id PRIMARY KEY,
+  CONSTRAINT fkey_auth_agentid FOREIGN KEY (agent_id) REFERENCES agent (id),
+  CONSTRAINT ukey_auth_code UNIQUE (code)
 );
 
-CREATE SEQUENCE IF NOT EXISTS seq_session_id INCREMENT 1 START 1 MINVALUE 1;
+CREATE SEQUENCE IF NOT EXISTS seq_auth_id INCREMENT 1 START 1 MINVALUE 1;
 
-CREATE INDEX IF NOT EXISTS ind_session_agentid ON session USING BTREE (agent_id);
+CREATE INDEX IF NOT EXISTS ind_auth_agentid ON session USING BTREE (agent_id);
 
-CREATE INDEX IF NOT EXISTS ind_session_alive ON session USING BTREE (alive);
+CREATE INDEX IF NOT EXISTS ind_auth_alive ON session USING BTREE (alive);
 
-CREATE INDEX IF NOT EXISTS ind_session_code ON session USING BTREE (code);
+CREATE INDEX IF NOT EXISTS ind_auth_code ON session USING BTREE (code);
 
 
 

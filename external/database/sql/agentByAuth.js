@@ -1,20 +1,20 @@
 module.exports = `
 SELECT
   agn.id,
-  ssn.id AS ssn_id,
+  ath.id AS ath_id,
   agn.login,
   agn.password,
   agn.alias,
   agn.email,
   agn.phone
 FROM
-  session ssn
+  auth ath
 INNER JOIN agent agn ON (
-  agn.id = ssn.agent_id
+  agn.id = ath.agent_id
   AND agn.alive = TRUE
 )
-WHERE ssn.code = $1
-AND ssn.alive = TRUE;
+WHERE ath.code = $1
+AND ath.alive = TRUE;
 
 --$1::VARCHAR
 `;
