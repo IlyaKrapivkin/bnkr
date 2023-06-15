@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS agent (
   CONSTRAINT pkey_agent_id PRIMARY KEY
 );
 
+CREATE SEQUENCE IF NOT EXISTS seq_agent_id INCREMENT 1 START 1 MINVALUE 1;
+
 CREATE INDEX IF NOT EXISTS ind_agent_alive ON agent USING BTREE (alive);
 
 CREATE INDEX IF NOT EXISTS ind_agent_login ON agent USING BTREE (login);
@@ -35,6 +37,8 @@ CREATE TABLE IF NOT EXISTS history_agent (
   CONSTRAINT fkey_historyagent_agentid FOREIGN KEY (agent_id) REFERENCES agent (id)
 );
 
+CREATE SEQUENCE IF NOT EXISTS seq_historyagent_id INCREMENT 1 START 1 MINVALUE 1;
+
 CREATE INDEX IF NOT EXISTS ind_historyagent_date ON history_agent USING BTREE (date);
 
 CREATE INDEX IF NOT EXISTS ind_historyagent_agentid ON history_agent USING BTREE (agent_id);
@@ -52,6 +56,8 @@ CREATE TABLE IF NOT EXISTS session (
   CONSTRAINT fkey_session_agentid FOREIGN KEY (agent_id) REFERENCES agent (id),
   CONSTRAINT ukey_session_code UNIQUE (code)
 );
+
+CREATE SEQUENCE IF NOT EXISTS seq_session_id INCREMENT 1 START 1 MINVALUE 1;
 
 CREATE INDEX IF NOT EXISTS ind_session_agentid ON session USING BTREE (agent_id);
 
@@ -71,6 +77,8 @@ CREATE TABLE IF NOT EXISTS history_session (
   CONSTRAINT fkey_historysession_sessionid FOREIGN KEY (session_id) REFERENCES session (id)
 );
 
+CREATE SEQUENCE IF NOT EXISTS seq_historysession_id INCREMENT 1 START 1 MINVALUE 1;
+
 CREATE INDEX IF NOT EXISTS ind_historysession_date ON history_session USING BTREE (date);
 
 CREATE INDEX IF NOT EXISTS ind_historysession_sessionid ON history_session USING BTREE (session_id);
@@ -89,6 +97,8 @@ CREATE TABLE IF NOT EXISTS verify (
   CONSTRAINT pkey_verify_id PRIMARY KEY (id),
   CONSTRAINT ckey_verify_score CHECK (score >= 0)
 );
+
+CREATE SEQUENCE IF NOT EXISTS seq_verify_id INCREMENT 1 START 1 MINVALUE 1;
 
 CREATE INDEX IF NOT EXISTS ind_verify_date ON verify USING BTREE (date);
 
