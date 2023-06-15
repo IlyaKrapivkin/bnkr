@@ -1,5 +1,5 @@
 module.exports = `
-INSERT INTO auth
+INSERT INTO verify
 (
   login,
   code

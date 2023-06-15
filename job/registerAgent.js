@@ -7,9 +7,9 @@ const {
 } = require(`../store.js`);
 const str_sqlAgentByLogin = require(`../external/database/sql/agentByLogin.js`);
 const str_sqlInsertAgent = require(`../external/database/sql/insertAgent.js`);
-const str_sqlInsertAuth = require(`../external/database/sql/insertAuth.js`);
-const str_sqlAuthByLogin = require(`../external/database/sql/authByLogin.js`);
-const str_sqlUpdateAuth = require(`../external/database/sql/updateAuth.js`);
+const str_sqlInsertVerify = require(`../external/database/sql/insertVerify.js`);
+const str_sqlVerifyByLogin = require(`../external/database/sql/verifyByLogin.js`);
+const str_sqlUpdateVerify = require(`../external/database/sql/updateVerify.js`);
 const str_sqlUpdateAgentAlive = require(`../external/database/sql/updateAgentAlive.js`);
 const fun_query = require(`../external/database/database.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
@@ -84,7 +84,7 @@ module.exports = async (
     // check code from request body
     if (code) {
       const arr_resDbAuthOld = await fun_query(
-        str_sqlAuthByLogin,
+        str_sqlVerifyByLogin,
         true,
         [
           str_loginChecked,
@@ -95,7 +95,7 @@ module.exports = async (
 
       if (str_authCodeOld && str_authCodeOld === code.trim()) {
         await fun_query(
-          str_sqlUpdateAuth,
+          str_sqlUpdateVerify,
           true,
           [
             num_authIdOld,
@@ -121,7 +121,7 @@ module.exports = async (
         }
       } else {
         await fun_query(
-          str_sqlUpdateAuth,
+          str_sqlUpdateVerify,
           true,
           [
             num_authIdOld,
@@ -158,7 +158,7 @@ module.exports = async (
       const num_codeAuth = fun_rndmDigits(6, false);
       console.log(`${ obj_messageLong.str_randomCode } [${ num_codeAuth }]`);
       await fun_query(
-        str_sqlInsertAuth,
+        str_sqlInsertVerify,
         true,
         [
           str_loginChecked,

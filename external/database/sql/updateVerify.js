@@ -1,6 +1,6 @@
 module.exports = `
 UPDATE
-  auth
+  verify
 SET
   alive = FALSE,
   score = score + 1,

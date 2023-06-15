@@ -4,7 +4,7 @@ SELECT
   login,
   code
 FROM
-  auth
+  verify
 WHERE login = $1
 AND alive = TRUE
 ORDER BY id DESC
