@@ -25,11 +25,11 @@ CREATE INDEX IF NOT EXISTS ind_agent_phone ON agent USING BTREE (phone);
 
 CREATE TABLE IF NOT EXISTS history_agent (
   id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
-  date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   agent_id BIGINT NOT NULL,
+  moment TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   alive BOOLEAN,
   login VARCHAR (64),
-  password VARCHAR (1024),
+  crypt VARCHAR (1024),
   alias VARCHAR (64),
   email VARCHAR (256),
   phone VARCHAR (32),
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS history_agent (
 
 CREATE SEQUENCE IF NOT EXISTS seq_historyagent_id INCREMENT 1 START 1 MINVALUE 1;
 
-CREATE INDEX IF NOT EXISTS ind_historyagent_date ON history_agent USING BTREE (date);
+CREATE INDEX IF NOT EXISTS ind_historyagent_moment ON history_agent USING BTREE (moment);
 
 CREATE INDEX IF NOT EXISTS ind_historyagent_agentid ON history_agent USING BTREE (agent_id);
 
@@ -49,8 +49,8 @@ CREATE INDEX IF NOT EXISTS ind_historyagent_alive ON history_agent USING BTREE (
 
 CREATE TABLE IF NOT EXISTS auth (
   id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
-  alive BOOLEAN NOT NULL DEFAULT TRUE,
   agent_id BIGINT NOT NULL,
+  alive BOOLEAN NOT NULL DEFAULT TRUE,
   code VARCHAR (256) NOT NULL,
   CONSTRAINT pkey_auth_id PRIMARY KEY,
   CONSTRAINT fkey_auth_agentid FOREIGN KEY (agent_id) REFERENCES agent (id),
@@ -69,8 +69,8 @@ CREATE INDEX IF NOT EXISTS ind_auth_code ON auth USING BTREE (code);
 
 CREATE TABLE IF NOT EXISTS history_auth (
   id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
-  moment TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   auth_id BIGINT NOT NULL,
+  moment TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   alive BOOLEAN,
   code VARCHAR (256),
   CONSTRAINT pkey_historyauth_id PRIMARY KEY (id),
