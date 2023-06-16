@@ -23,8 +23,8 @@ module.exports = async (
 
     if (str_session) {
       const arr_resDb = await fun_query(
-        str_sqlAgentByAuth,
         false,
+        str_sqlAgentByAuth,
         [str_session],
       );
 
@@ -45,7 +45,7 @@ module.exports = async (
       }
     }
     
-    throw obj_error.str_session;
+    throw obj_error.str_authCode;
   } catch (error) {
     const str_error = (
       error?.message ||

@@ -2,7 +2,7 @@ module.exports = `
 UPDATE
   agent
 SET
-  alive = TRUE,
+  alive = TRUE
 WHERE id = $1;
 
 --$1::INTEGER

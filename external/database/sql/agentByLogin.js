@@ -1,10 +1,11 @@
 module.exports = `
 SELECT
-  id
+  id,
+  alive
 FROM
   agent
 WHERE login = $1
-AND alive = TRUE;
+ORDER BY id DESC;
 
 --$1::VARCHAR
 `;

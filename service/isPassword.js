@@ -6,9 +6,9 @@ const {
 } = require(`../store.js`);
 
 module.exports = (
-  password,
-  allowCyrillic,
   allowError,
+  allowCyrillic,
+  password,
 ) => {
   try {
     if (

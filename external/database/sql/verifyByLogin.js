@@ -2,7 +2,8 @@ module.exports = `
 SELECT
   id,
   login,
-  code
+  code,
+  moment
 FROM
   verify
 WHERE login = $1

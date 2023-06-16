@@ -8,8 +8,8 @@ const {
 } = require(`../../store.js`);
 
 module.exports = async (
-  sql,
   allowError,
+  sql,
   parameters,
 ) => {
   try {

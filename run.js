@@ -59,8 +59,8 @@ const fun_startListener = async () => {
 
   // connection to database
   const arr_resDb = await fun_query(
-    str_sqlVersion,
     false,
+    str_sqlVersion,
     [],
   );
   const str_versionDb = arr_resDb[0]?.version;
@@ -206,30 +206,30 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
               serverResponse.statusCode = obj_statusHttp.num_statusWrongAuthorized;
               serverResponse.end(obj_messageShort.str_needNoAuth);
             } else {
-              //TODO
-              const num_agentNewId = await fun_registerAgent(
+              //TODO end registration
+              const obj_agentCreationResult = await fun_registerAgent(
+                false,
                 obj_reqBody?.secret,
                 obj_reqBody?.code,
                 obj_reqBody?.login,
                 obj_reqBody?.password,
                 obj_reqBody?.alias,
-                false,
               );
   
-              if (num_agentNewId) {
-                serverResponse.setHeader(
-                  obj_headerNameHttp.str_headerContentType,
-                  obj_headerValueHttp.str_headerValueText,
-                );
-                serverResponse.statusCode = obj_statusHttp.num_statusOk;
-                serverResponse.end(obj_messageShort.str_ok);
-              } else {
+              if (obj_agentCreationResult.error) {
                 serverResponse.setHeader(
                   obj_headerNameHttp.str_headerContentType,
                   obj_headerValueHttp.str_headerValueText,
                 );
                 serverResponse.statusCode = obj_statusHttp.num_serverError;
-                serverResponse.end(obj_messageShort.str_notOK);
+                serverResponse.end(obj_agentCreationResult.error);
+              } else {
+                serverResponse.setHeader(
+                  obj_headerNameHttp.str_headerContentType,
+                  obj_headerValueHttp.str_headerValueText,
+                );
+                serverResponse.statusCode = obj_statusHttp.num_statusOk;
+                serverResponse.end(obj_agentCreationResult.message);                
               }
             }
           break;

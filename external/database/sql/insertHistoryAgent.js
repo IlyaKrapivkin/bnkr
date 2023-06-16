@@ -1,6 +1,7 @@
 module.exports = `
-INSERT INTO agent
+INSERT INTO history_agent
 (
+  agent_id,
   alive,
   login,
   crypt,
@@ -15,14 +16,16 @@ VALUES
   $3,
   $4,
   $5,
-  $6
+  $6,
+  $7
 )
 RETURNING id;
 
---$1::BOOLEAN
---$2::VARCHAR
+--$1::INTEGER
+--$2::BOOLEAN
 --$3::VARCHAR
 --$4::VARCHAR
 --$5::VARCHAR
 --$6::VARCHAR
+--$7::VARCHAR
 `;
