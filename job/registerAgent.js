@@ -98,8 +98,8 @@ module.exports = async (
           str_sqlUpdateVerify,
           true,
           [
-            num_authIdOld,
             false,
+            num_authIdOld,
           ]
         );
 
@@ -124,8 +124,8 @@ module.exports = async (
           str_sqlUpdateVerify,
           true,
           [
-            num_authIdOld,
             true,
+            num_authIdOld,
           ]
         );
 

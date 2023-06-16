@@ -2,10 +2,9 @@ module.exports = `
 UPDATE
   verify
 SET
-  alive = FALSE,
   score = score + 1,
-  alive = $2
-WHERE id = $1
+  alive = $1,
+WHERE id = $2
 AND alive = TRUE;
 
 --$1::INTEGER
