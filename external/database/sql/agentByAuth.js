@@ -3,7 +3,7 @@ SELECT
   agn.id,
   ath.id AS ath_id,
   agn.login,
-  agn.password,
+  agn.crypt,
   agn.alias,
   agn.email,
   agn.phone

@@ -3,7 +3,7 @@ INSERT INTO agent
 (
   alive,
   login,
-  password,
+  crypt,
   alias,
   email,
   phone

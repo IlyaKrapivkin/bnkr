@@ -36,7 +36,7 @@ module.exports = async (
           id: any_agent.id,
           session_id: any_agent.ath_id,
           login: any_agent.login,
-          password: any_agent.password,
+          crypt: any_agent.crypt,
           alias: any_agent.alias,
           email: any_agent.email || null,
           phone: any_agent.phone || null,
