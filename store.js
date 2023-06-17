@@ -30,6 +30,9 @@ const obj_store = {
     str_routeInfoApp: `/infoApp`,
     str_routeRegAgent: `/registerAgent`,
   },
+  obj_timeoutMs: {
+    num_verifyCodeLife: 120000,
+  },
   obj_encoding: {
     str_utf: `utf8`,
     str_pbfr: `base64`,
@@ -91,6 +94,7 @@ const obj_store = {
     str_dbNoConnect: `cannot connect to database`,
     str_queryDuration: `query duration`,
     str_randomCode: `random code generated`,
+    str_newCode: `new random code will be generated`,
   },
   obj_error: {
     str_unknown: `unknown server error`,
@@ -110,6 +114,7 @@ const obj_store = {
     str_code: `incorrect verification code`,
     str_dbAnswer: `incorrect database answer`,
     str_reqbody: `cannot parse request body`,
+    str_codeExpired: `verify code expried`,
     str_insert: `cannot insert new row into DB`,
     str_bfrToObj: `cannot convert bufffer to object`,
     str_strToEmail: `cannot convert string to email`,
@@ -137,6 +142,7 @@ exports.obj_statusHttp = obj_store.obj_statusHttp;
 exports.obj_headerNameHttp = obj_store.obj_headerNameHttp;
 exports.obj_headerValueHttp = obj_store.obj_headerValueHttp;
 exports.obj_route = obj_store.obj_route;
+exports.obj_timeoutMs = obj_store.obj_timeoutMs;
 exports.obj_encoding = obj_store.obj_encoding;
 exports.obj_typeof = obj_store.obj_typeof;
 exports.obj_icon = obj_store.obj_icon;

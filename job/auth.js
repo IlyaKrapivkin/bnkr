@@ -43,6 +43,8 @@ module.exports = async (
         };
         return obj_agent;
       }
+    } else {
+      return {};
     }
     
     throw obj_error.str_authCode;

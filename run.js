@@ -135,8 +135,6 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
 
       console.log(`${ obj_error.str_reqbody } [${ str_error }]`);
     }
-    
-    console.log(obj_reqBody);
   
     // check of request authorization
     const str_headerNameAuth = obj_headerNameHttp.str_headerAuthorization.toLowerCase();

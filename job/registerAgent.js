@@ -2,6 +2,8 @@ const {
   obj_error,
   obj_sign,
   obj_typeof,
+  obj_measure,
+  obj_timeoutMs,
   obj_messageLong,
   obj_messageShort,
 } = require(`../store.js`);
@@ -90,8 +92,7 @@ module.exports = async (
         typeof str_verifyCodeOld === obj_typeof.str_typeStr &&
         str_verifyCodeOld === code.trim()
       ) {
-        console.log(dte_verifyMomentOld);
-        //TODO check expiration time
+        const num_diffTime = new Date().getTime() - dte_verifyMomentOld.getTime();
 
         await fun_query(
           true,
@@ -102,35 +103,40 @@ module.exports = async (
           ]
         );
 
-        if (num_agentSameId) {
-          await fun_query(
-            true,
-            str_sqlUpdateAgentAlive,
-            [
-              num_agentSameId,
-            ]
-          );
-
-          await fun_query(
-            true,
-            str_sqlInsertHistoryAgent,
-            [
-              num_agentSameId,
+        if (num_diffTime > obj_timeoutMs.num_verifyCodeLife) {
+          console.log(`${ obj_error.str_codeExpired } [${ num_diffTime }]${ obj_measure.str_msrMs }`);
+          console.log(`${ obj_messageLong.str_newCode }`);
+        } else {  
+          if (num_agentSameId) {
+            await fun_query(
               true,
-              null,
-              null,
-              null,
-              null,
-              null,
-            ],
-          );
-
-          return {
-            message: `${obj_messageShort.str_agentRegistered} ${str_loginChecked}`,
-            error: ``,
-          };
-        } else {
-          throw obj_error.str_agentNotFound;
+              str_sqlUpdateAgentAlive,
+              [
+                num_agentSameId,
+              ]
+            );
+  
+            await fun_query(
+              true,
+              str_sqlInsertHistoryAgent,
+              [
+                num_agentSameId,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+              ],
+            );
+  
+            return {
+              message: `${ obj_messageShort.str_agentRegistered } ${ str_loginChecked }`,
+              error: ``,
+            };
+          } else {
+            throw obj_error.str_agentNotFound;
+          }
         }
       } else {
         await fun_query(
@@ -143,7 +149,6 @@ module.exports = async (
         );
 
         throw obj_error.str_code;
-
       }
     } else {
       const str_aliasChecked = (
@@ -154,7 +159,7 @@ module.exports = async (
       if (!str_aliasChecked) {
         throw obj_error.str_inputAlias;
       }
-
+  
       if (!fun_isPassword(false, false, password)) {
         throw obj_error.str_inputPassword;
       }
@@ -163,7 +168,7 @@ module.exports = async (
       if (num_agentSameId) {
         throw obj_error.str_agentSame;
       }
-
+  
       const arr_resDbAgentNew = await fun_query(
         true,
         str_sqlInsertAgent,
@@ -180,7 +185,7 @@ module.exports = async (
       if (!num_agentId) {
         throw obj_error.str_insert;
       }
-
+  
       await fun_query(
         true,
         str_sqlInsertHistoryAgent,
@@ -194,24 +199,24 @@ module.exports = async (
           str_phoneByLogin || null,
         ],
       );
-  
-      // code sending
-      const num_codeVerifyNew = fun_rndmDigits(6, false);
-      console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
-      await fun_query(
-        true,
-        str_sqlInsertVerify,
-        [
-          str_loginChecked,
-          num_codeVerifyNew,
-        ],
-      );
-
-      return {
-        message: `${obj_messageShort.str_codeSentTo} ${str_loginChecked}`,
-        error: ``,
-      };
     }
+
+    // code sending
+    const num_codeVerifyNew = fun_rndmDigits(6, false);
+    console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
+    await fun_query(
+      true,
+      str_sqlInsertVerify,
+      [
+        str_loginChecked,
+        num_codeVerifyNew,
+      ],
+    );
+
+    return {
+      message: `${obj_messageShort.str_codeSentTo} ${str_loginChecked}`,
+      error: ``,
+    };
   } catch (error) {
     const str_error = (
       error?.message ||
