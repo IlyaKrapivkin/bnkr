@@ -71,6 +71,7 @@ const obj_store = {
   },
   obj_measure: {
     str_msrMs: `ms`,
+    str_msrItm: `itm`,
   },
   obj_reqEvent: {
     str_eventData: `data`,
@@ -113,6 +114,7 @@ const obj_store = {
     str_authCode: `incorrect auth code`,
     str_code: `incorrect verification code`,
     str_dbAnswer: `incorrect database answer`,
+    str_dbLogyc: `incorrect logyc in DB rows`,
     str_reqbody: `cannot parse request body`,
     str_codeExpired: `verify code expried`,
     str_insert: `cannot insert new row into DB`,

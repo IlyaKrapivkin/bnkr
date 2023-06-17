@@ -7,8 +7,10 @@ const {
   obj_messageLong,
   obj_messageShort,
 } = require(`../store.js`);
-const str_sqlUpdateAgentAlive = require(`../external/database/sql/updateAgentAlive.js`);
+const str_sqlInsertHistoryAgentKilled = require(`../external/database/sql/insertHistoryAgentKilled.js`);
 const str_sqlInsertHistoryAgent = require(`../external/database/sql/insertHistoryAgent.js`);
+const str_sqlUpdateAgentAlive = require(`../external/database/sql/updateAgentAlive.js`);
+const str_sqlUpdateAgentKill = require(`../external/database/sql/updateAgentKill.js`);
 const str_sqlVerifyByLogin = require(`../external/database/sql/verifyByLogin.js`);
 const str_sqlAgentByLogin = require(`../external/database/sql/agentByLogin.js`);
 const str_sqlInsertVerify = require(`../external/database/sql/insertVerify.js`);
@@ -48,12 +50,12 @@ module.exports = async (
       obj_sign.str_empty
     );
 
-    const str_emailByLogin = fun_strToEmail(str_loginInitial, false);
-    const str_phoneByLogin = fun_strToPhone(str_loginInitial, false);
-
     if (!str_loginInitial) {
       throw obj_error.str_inputNoLogin;
     }
+
+    const str_emailByLogin = fun_strToEmail(str_loginInitial, false);
+    const str_phoneByLogin = fun_strToPhone(str_loginInitial, false);
 
     if (!str_emailByLogin && !str_phoneByLogin) {
       throw obj_error.str_inputLogin;
@@ -66,11 +68,46 @@ module.exports = async (
       str_sqlAgentByLogin,
       [str_loginChecked],
     );
-    if (arr_resDbAgentSame.find(obj => obj.alive === true)) {
+
+    const arr_agentAliveIds = arr_resDbAgentSame.filter(
+      obj => obj.alive === true
+    ).map(
+      obj => obj.id
+    );
+    const arr_agentDeadIds = arr_resDbAgentSame.filter(
+      obj => !arr_agentAliveIds.includes(obj.id)
+    ).map(
+      obj => obj.id
+    );
+
+    if (arr_agentAliveIds.length) {
+      if (arr_agentAliveIds.length > 1) {
+        const arr_agentAliveUnwantedIds = arr_agentAliveIds.filter(
+          (val,ind) => ind < (arr_agentAliveIds.length - 1)
+        );
+
+        console.log(`${ obj_error.str_dbLogyc } [${ arr_agentAliveUnwantedIds.length }]${ obj_measure.str_msrItm }`);
+
+        await fun_query(
+          true,
+          str_sqlUpdateAgentKill,
+          [
+            arr_agentAliveUnwantedIds,
+          ],
+        );
+
+        await fun_query(
+          true,
+          str_sqlInsertHistoryAgentKilled,
+          [
+            arr_agentAliveUnwantedIds,
+          ]
+        );
+      }
       throw obj_error.str_agentSame;
     }
 
-    const num_agentSameId = arr_resDbAgentSame[0]?.id;
+    const num_agentSameDeadId = arr_agentDeadIds[0]?.id;
 
     // check code from request body
     // find idential verify code in DB
@@ -107,12 +144,12 @@ module.exports = async (
           console.log(`${ obj_error.str_codeExpired } [${ num_diffTime }]${ obj_measure.str_msrMs }`);
           console.log(`${ obj_messageLong.str_newCode }`);
         } else {  
-          if (num_agentSameId) {
+          if (num_agentSameDeadId) {
             await fun_query(
               true,
               str_sqlUpdateAgentAlive,
               [
-                num_agentSameId,
+                num_agentSameDeadId,
               ]
             );
   
@@ -120,7 +157,7 @@ module.exports = async (
               true,
               str_sqlInsertHistoryAgent,
               [
-                num_agentSameId,
+                num_agentSameDeadId,
                 true,
                 null,
                 null,
@@ -165,7 +202,7 @@ module.exports = async (
       }
       const str_passCrypted = fun_strToPbfr(password, true);
 
-      if (num_agentSameId) {
+      if (num_agentSameDeadId) {
         throw obj_error.str_agentSame;
       }
   
