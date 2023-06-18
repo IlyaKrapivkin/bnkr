@@ -16,6 +16,7 @@ const str_sqlAgentByLogin = require(`../external/database/sql/agentByLogin.js`);
 const str_sqlInsertVerify = require(`../external/database/sql/insertVerify.js`);
 const str_sqlUpdateVerify = require(`../external/database/sql/updateVerify.js`);
 const str_sqlInsertAgent = require(`../external/database/sql/insertAgent.js`);
+const str_sqlUpdateAgent = require(`../external/database/sql/updateAgent.js`);
 const fun_query = require(`../external/database/database.js`);
 const fun_isPassword = require(`../service/isPassword.js`);
 const fun_strToEmail = require(`../service/strToEmail.js`);
@@ -32,6 +33,7 @@ module.exports = async (
   alias,
 ) => {
   try {
+    // check input
     if (
       !secret ||
       typeof secret !== obj_typeof.str_typeStr ||
@@ -63,27 +65,26 @@ module.exports = async (
 
     const str_loginChecked = (str_emailByLogin || str_phoneByLogin);
 
+    // get all agents with same login
     const arr_resDbAgentSame = await fun_query(
       false,
       str_sqlAgentByLogin,
       [str_loginChecked],
     );
 
-    const arr_agentAliveIds = arr_resDbAgentSame.filter(
+    const arr_agentSameAliveIds = arr_resDbAgentSame.filter(
       obj => obj.alive === true
     ).map(
       obj => obj.id
     );
-    const arr_agentDeadIds = arr_resDbAgentSame.filter(
-      obj => !arr_agentAliveIds.includes(obj.id)
-    ).map(
-      obj => obj.id
+    const arr_agentSameDead = arr_resDbAgentSame.filter(
+      obj => !arr_agentSameAliveIds.includes(obj.id)
     );
 
-    if (arr_agentAliveIds.length) {
-      if (arr_agentAliveIds.length > 1) {
-        const arr_agentAliveUnwantedIds = arr_agentAliveIds.filter(
-          (val,ind) => ind < (arr_agentAliveIds.length - 1)
+    if (arr_agentSameAliveIds.length) {
+      if (arr_agentSameAliveIds.length > 1) {
+        const arr_agentAliveUnwantedIds = arr_agentSameAliveIds.filter(
+          (val,ind) => ind < (arr_agentSameAliveIds.length - 1)
         );
 
         console.log(`${ obj_error.str_dbLogyc } [${ arr_agentAliveUnwantedIds.length }]${ obj_measure.str_msrItm }`);
@@ -107,11 +108,10 @@ module.exports = async (
       throw obj_error.str_agentSame;
     }
 
-    const num_agentSameDeadId = arr_agentDeadIds[0]?.id;
+    const obj_agentSameDead = arr_agentSameDead[0];
+    const num_agentSameDeadId = obj_agentSameDead?.id;
 
     // check code from request body
-    // find idential verify code in DB
-    // and check its expiration time
     if (code) {
       const arr_resDbVerifyOld = await fun_query(
         true,
@@ -169,7 +169,7 @@ module.exports = async (
   
             return {
               message: `${ obj_messageShort.str_agentRegistered } ${ str_loginChecked }`,
-              error: ``,
+              error: obj_sign.str_empty,
             };
           } else {
             throw obj_error.str_agentNotFound;
@@ -201,44 +201,79 @@ module.exports = async (
         throw obj_error.str_inputPassword;
       }
       const str_passCrypted = fun_strToPbfr(password, true);
-
-      if (num_agentSameDeadId) {
-        throw obj_error.str_agentSame;
-      }
   
-      const arr_resDbAgentNew = await fun_query(
-        true,
-        str_sqlInsertAgent,
-        [
-          false,
-          str_loginChecked,
-          str_passCrypted,
-          str_aliasChecked,
-          str_emailByLogin || null,
-          str_phoneByLogin || null,
-        ],
-      );
-      const num_agentId = arr_resDbAgentNew[0].id;
-      if (!num_agentId) {
-        throw obj_error.str_insert;
-      }
+      if (obj_agentSameDead && num_agentSameDeadId) {
+        const bol_cryptChanged = (obj_agentSameDead.crypt !== str_passCrypted);
+        const bol_aliasChanged = (obj_agentSameDead.alias !== str_aliasChecked);
+        const bol_emailChanged = (obj_agentSameDead.email !== str_emailByLogin);
+        const bol_phoneChanged = (obj_agentSameDead.phone !== str_phoneByLogin);
+        if (
+          bol_cryptChanged ||
+          bol_aliasChanged ||
+          bol_emailChanged ||
+          bol_phoneChanged
+        ) {
+          await fun_query(
+            true,
+            str_sqlUpdateAgent,
+            [
+              (bol_cryptChanged ? str_passCrypted : null),
+              (bol_aliasChanged ? str_aliasChecked : null),
+              (bol_emailChanged && str_emailByLogin ? str_emailByLogin : null),
+              (bol_phoneChanged && str_phoneByLogin ? str_phoneByLogin : null),
+              num_agentSameDeadId,
+            ],
+          );
   
-      await fun_query(
-        true,
-        str_sqlInsertHistoryAgent,
-        [
-          num_agentId,
-          false,
-          str_loginChecked,
-          str_passCrypted,
-          str_aliasChecked,
-          str_emailByLogin || null,
-          str_phoneByLogin || null,
-        ],
-      );
+          await fun_query(
+            true,
+            str_sqlInsertHistoryAgent,
+            [
+              num_agentSameDeadId,
+              null,
+              null,
+              (bol_cryptChanged ? str_passCrypted : null),
+              (bol_aliasChanged ? str_aliasChecked : null),
+              (bol_emailChanged && str_emailByLogin ? str_emailByLogin : null),
+              (bol_phoneChanged && str_phoneByLogin ? str_phoneByLogin : null),
+            ],
+          );
+        }
+      } else {
+        const arr_resDbAgentNew = await fun_query(
+          true,
+          str_sqlInsertAgent,
+          [
+            false,
+            str_loginChecked,
+            str_passCrypted,
+            str_aliasChecked,
+            str_emailByLogin || null,
+            str_phoneByLogin || null,
+          ],
+        );
+        const num_agentId = arr_resDbAgentNew[0].id;
+        if (!num_agentId) {
+          throw obj_error.str_insert;
+        }
+    
+        await fun_query(
+          true,
+          str_sqlInsertHistoryAgent,
+          [
+            num_agentId,
+            false,
+            str_loginChecked,
+            str_passCrypted,
+            str_aliasChecked,
+            str_emailByLogin || null,
+            str_phoneByLogin || null,
+          ],
+        );
+      }
     }
 
-    // code sending
+    // code generation and sending
     const num_codeVerifyNew = fun_rndmDigits(6, false);
     console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
     await fun_query(
@@ -252,7 +287,7 @@ module.exports = async (
 
     return {
       message: `${obj_messageShort.str_codeSentTo} ${str_loginChecked}`,
-      error: ``,
+      error: obj_sign.str_empty,
     };
   } catch (error) {
     const str_error = (
@@ -268,7 +303,7 @@ module.exports = async (
       throw str_error;
     } else {
       return {
-        message: ``,
+        message: obj_sign.str_empty,
         error: str_error,
       }
     }

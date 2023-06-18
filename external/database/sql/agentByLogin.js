@@ -1,7 +1,11 @@
 module.exports = `
 SELECT
   id,
-  alive
+  alive,
+  crypt,
+  alias,
+  email,
+  phone
 FROM
   agent
 WHERE login = $1
