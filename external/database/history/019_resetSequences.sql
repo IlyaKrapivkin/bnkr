@@ -1,0 +1,9 @@
+ALTER SEQUENCE seq_agent_id RESTART WITH 1;
+
+ALTER SEQUENCE seq_historyagent_id RESTART WITH 1;
+
+ALTER SEQUENCE seq_auth_id RESTART WITH 1;
+
+ALTER SEQUENCE seq_historyauth_id RESTART WITH 1;
+
+ALTER SEQUENCE seq_verify_id RESTART WITH 1;
