@@ -111,25 +111,42 @@ module.exports = async (
     const obj_agentSameDead = arr_agentSameDead[0];
     const num_agentSameDeadId = obj_agentSameDead?.id;
 
-    // check code from request body
-    if (code) {
-      const arr_resDbVerifyOld = await fun_query(
-        true,
-        str_sqlVerifyByLogin,
-        [
-          str_loginChecked,
-        ],
-      );
-      const str_verifyCodeOld = arr_resDbVerifyOld[0]?.code;
-      const num_verifyIdOld = arr_resDbVerifyOld[0]?.id;
-      const dte_verifyMomentOld = arr_resDbVerifyOld[0]?.moment;
+    // get last code from DB
+    const arr_resDbVerifyOld = await fun_query(
+      true,
+      str_sqlVerifyByLogin,
+      [
+        str_loginChecked,
+      ],
+    );
+    const obj_verifyLastOld = arr_resDbVerifyOld[0];
 
+    const num_verifyIdOld = obj_verifyLastOld?.id;
+    const str_verifyCodeOld = obj_verifyLastOld?.code;
+    const dte_verifyMomentOld = obj_verifyLastOld?.moment;
+    const bol_verifyAlive = (
+      num_verifyIdOld &&
+      str_verifyCodeOld &&
+      dte_verifyMomentOld
+    );
+    const num_verifyDiffTime = (
+      bol_verifyAlive ?
+      (new Date().getTime() - dte_verifyMomentOld.getTime()) :
+      0
+    );
+    const bol_verifyExpired = (num_verifyDiffTime > obj_timeoutMs.num_verifyCodeLife);
+    const num_verifyLifeTimeLast = (
+      bol_verifyExpired ?
+      0 :
+      obj_timeoutMs.num_verifyCodeLife - num_verifyDiffTime
+    );
+
+    // check code from input
+    if (code) {
       if (
-        str_verifyCodeOld &&
-        typeof str_verifyCodeOld === obj_typeof.str_typeStr &&
+        bol_verifyAlive &&
         str_verifyCodeOld === code.trim()
       ) {
-        const num_diffTime = new Date().getTime() - dte_verifyMomentOld.getTime();
 
         await fun_query(
           true,
@@ -140,10 +157,10 @@ module.exports = async (
           ]
         );
 
-        if (num_diffTime > obj_timeoutMs.num_verifyCodeLife) {
-          console.log(`${ obj_error.str_codeExpired } [${ num_diffTime }]${ obj_measure.str_msrMs }`);
+        if (bol_verifyExpired) {
+          console.log(`${ obj_error.str_codeExpired } [${ num_verifyDiffTime }]${ obj_measure.str_msrMs }`);
           console.log(`${ obj_messageLong.str_newCode }`);
-        } else {  
+        } else {
           if (num_agentSameDeadId) {
             await fun_query(
               true,
@@ -205,8 +222,8 @@ module.exports = async (
       if (obj_agentSameDead && num_agentSameDeadId) {
         const bol_cryptChanged = (obj_agentSameDead.crypt !== str_passCrypted);
         const bol_aliasChanged = (obj_agentSameDead.alias !== str_aliasChecked);
-        const bol_emailChanged = (obj_agentSameDead.email !== str_emailByLogin);
-        const bol_phoneChanged = (obj_agentSameDead.phone !== str_phoneByLogin);
+        const bol_emailChanged = (str_emailByLogin && obj_agentSameDead.email !== str_emailByLogin);
+        const bol_phoneChanged = (str_phoneByLogin && obj_agentSameDead.phone !== str_phoneByLogin);
         if (
           bol_cryptChanged ||
           bol_aliasChanged ||
@@ -274,21 +291,28 @@ module.exports = async (
     }
 
     // code generation and sending
-    const num_codeVerifyNew = fun_rndmDigits(6, false);
-    console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
-    await fun_query(
-      true,
-      str_sqlInsertVerify,
-      [
-        str_loginChecked,
-        num_codeVerifyNew,
-      ],
-    );
+    if (!bol_verifyAlive || bol_verifyExpired) {
+      const num_codeVerifyNew = fun_rndmDigits(6, false);
+      console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
+      await fun_query(
+        true,
+        str_sqlInsertVerify,
+        [
+          str_loginChecked,
+          num_codeVerifyNew,
+        ],
+      );
 
-    return {
-      message: `${obj_messageShort.str_codeSentTo} ${str_loginChecked}`,
-      error: obj_sign.str_empty,
-    };
+      return {
+        message: `${ obj_messageShort.str_codeSentTo } ${ str_loginChecked }`,
+        error: obj_sign.str_empty,
+      };
+    } else {
+      return {
+        message: `${ obj_messageShort.str_codePrevAlive } [${ num_verifyLifeTimeLast }]${ obj_measure.str_msrMs }`,
+        error: obj_sign.str_empty,
+      };
+    }
   } catch (error) {
     const str_error = (
       error?.message ||

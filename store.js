@@ -86,6 +86,7 @@ const obj_store = {
     str_needNoAuth: `NOT ALLOWED FOR AUTHORIZED`,
     str_methodNotAllowed: `METHOD NOT ALLOWED`,
     str_codeSentTo: `CODE SENT TO`,
+    str_codePrevAlive: `PREVIOUS CODE IS STILL ALIVE`,
     str_agentRegistered: `AGENT REGISTERED`,
     str_agentNotFound: `AGENT NOT FOUND`,
   },

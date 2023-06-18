@@ -1,7 +1,6 @@
 module.exports = `
 SELECT
   id,
-  login,
   code,
   moment
 FROM
