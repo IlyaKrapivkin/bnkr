@@ -3,7 +3,7 @@ const {
   obj_sign,
   obj_typeof,
 } = require(`../store.js`);
-const fun_query = require(`../external/database/database.js`);
+const fun_query = require(`../external/database/main/database.js`);
 const str_sqlAgentByAuth = require(`../external/database/sql/agentByAuth.js`);
 
 module.exports = async (
@@ -29,7 +29,6 @@ module.exports = async (
       );
 
       const any_agent = arr_resDb[0];
-      console.log(any_agent);
 
       if (any_agent && any_agent.id) {
         const obj_agent = {

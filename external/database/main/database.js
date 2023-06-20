@@ -5,7 +5,7 @@ const {
   obj_typeof,
   obj_measure,
   obj_messageLong,
-} = require(`../../store.js`);
+} = require(`../../../store.js`);
 
 module.exports = async (
   allowError,

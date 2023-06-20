@@ -22,7 +22,7 @@ const {
 
 const str_sqlVersion = require(`./external/database/sql/version.js`);
 
-const fun_query = require(`./external/database/database.js`);
+const fun_query = require(`./external/database/main/database.js`);
 
 const fun_auth = require(`./job/auth.js`);
 const fun_registerAgent = require(`./job/registerAgent`);
@@ -118,13 +118,14 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
   incomingMessage.on(obj_reqEvent.str_eventEnd, async () => {
     // parsing request body to json
     try {
-      const any_parsedData = JSON.parse(str_rawData);
-
-      if (
-        any_parsedData &&
-        typeof any_parsedData === obj_typeof.str_typeObj
-      ) {
-        obj_reqBody = any_parsedData;
+      if (str_rawData) {
+        const any_parsedData = JSON.parse(str_rawData);
+        if (
+          any_parsedData &&
+          typeof any_parsedData === obj_typeof.str_typeObj
+        ) {
+          obj_reqBody = any_parsedData;
+        }
       }
     } catch (error) {
       const str_error = (
@@ -148,7 +149,7 @@ const server = http.createServer(async (incomingMessage, serverResponse) => {
       case obj_methodHttp.str_methodGet:
         switch (incomingMessage.url) {
           case obj_route.str_routePing:
-            serverResponse.setHeadincomingMessageer(
+            serverResponse.setHeader(
               obj_headerNameHttp.str_headerContentType,
               obj_headerValueHttp.str_headerValueText,
             );
