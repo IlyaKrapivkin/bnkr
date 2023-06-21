@@ -8,6 +8,7 @@ const {
   obj_messageShort,
 } = require(`../store.js`);
 const str_sqlInsertHistoryAgentKilled = require(`../external/database/sql/insertHistoryAgentKilled.js`);
+const str_sqlUpdateVerifyKill = require(`../external/database/sql/updateVerifyKill.js`);
 const str_sqlInsertHistoryAgent = require(`../external/database/sql/insertHistoryAgent.js`);
 const str_sqlUpdateAgentAlive = require(`../external/database/sql/updateAgentAlive.js`);
 const str_sqlUpdateAgentKill = require(`../external/database/sql/updateAgentKill.js`);
@@ -292,6 +293,14 @@ module.exports = async (
 
     // code generation and sending
     if (!bol_verifyAlive || bol_verifyExpired) {
+      await fun_query(
+        true,
+        str_sqlUpdateVerifyKill,
+        [
+          str_loginChecked,
+        ],
+      );
+
       const num_codeVerifyNew = fun_rndmDigits(6, false);
       console.log(`${ obj_messageLong.str_randomCode } [${ num_codeVerifyNew }]`);
       await fun_query(

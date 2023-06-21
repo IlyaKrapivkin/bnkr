@@ -49,9 +49,10 @@ const obj_store = {
   },
   obj_icon: {
     str_iconError: `❌`,
-    str_iconRequest: `🚗`,
-    str_iconServer: `🚀`,
-    str_iconDb: `📚`,
+    str_iconRequest: `🏳️`,
+    str_iconResponse: `🏴`,
+    str_iconServer: `🚩`,
+    str_iconDb: `💿`,
   },
   obj_sign: {
     str_space: ` `,
